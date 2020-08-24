@@ -1,0 +1,3 @@
+## Model
+
+Contains core domain
