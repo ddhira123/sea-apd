@@ -1,6 +1,9 @@
 package product
 
+import "github.com/jinzhu/gorm"
+
 type Product struct {
+	gorm.Model
 	Name        string `json:"id"`
 	Description string `json:"description"`
 	Price       int    `json:"price"`

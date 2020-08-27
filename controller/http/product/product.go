@@ -22,13 +22,13 @@ func NewProductController(r *mux.Router, p product.ProductUseCase) {
 
 func (p *ProductController) GetProducts(r http.ResponseWriter, w *http.Request) {
 	c := w.Context()
-	s, err := p.pc.GetProducts(c)
+	products, err := p.pc.GetProducts(c)
 	if err != nil {
 		log.Panic("Error")
 	}
-	q, e := json.Marshal(s)
-	if e != nil {
+	s, err := json.Marshal(products)
+	if err != nil {
 		log.Panic("Error")
 	}
-	fmt.Fprintf(r, string(q))
+	fmt.Fprintf(r, string(s))
 }
