@@ -4,25 +4,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/williamchang80/sea-apd/usecase/product"
+	"github.com/williamchang80/sea-apd/domain"
 	"log"
 	"net/http"
 )
 
 type ProductController struct {
-	pc product.ProductUseCase
+	usecase domain.ProductUsecase
 }
 
-func NewProductController(r *mux.Router, p product.ProductUseCase) {
+func NewProductController(r *mux.Router, p domain.ProductUsecase) {
 	c := &ProductController{
-		pc: p,
+		usecase: p,
 	}
 	r.HandleFunc("/products", c.GetProducts)
 }
 
 func (p *ProductController) GetProducts(r http.ResponseWriter, w *http.Request) {
-	c := w.Context()
-	products, err := p.pc.GetProducts(c)
+	products, err := p.usecase.GetProducts()
 	if err != nil {
 		log.Panic("Error")
 	}
