@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/williamchang80/sea-apd/dto/request"
 )
 
 type Product struct {
@@ -15,18 +16,18 @@ type Product struct {
 
 type ProductUsecase interface {
 	GetProducts() ([]Product, error)
-	GetProductById(product Product) Product
-	CreateProduct(product Product) error
-	UpdateProduct(productId string, product Product) error
-	DeleteProduct(productId Product) error
+	GetProductById(string) (Product, error)
+	CreateProduct(request.Product) error
+	UpdateProduct(string, request.Product) error
+	DeleteProduct(string) error
 }
 
 type ProductRepository interface {
 	GetProducts() ([]Product, error)
-	GetProductById(product Product) Product
-	CreateProduct(product Product) error
-	UpdateProduct(productId string, product Product) error
-	DeleteProduct(productId Product) error
+	GetProductById(string) (Product, error)
+	CreateProduct(Product) error
+	UpdateProduct(string, Product) error
+	DeleteProduct(string) error
 }
 
 func NewProduct(name string, desc string, price int, image string, stock int) *Product {

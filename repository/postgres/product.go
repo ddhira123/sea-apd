@@ -25,18 +25,21 @@ func (p *ProductRepository) GetProducts() ([]domain.Product, error) {
 	return products, nil
 }
 
-func (p *ProductRepository) GetProductById(product domain.Product) domain.Product {
+func (p *ProductRepository) GetProductById(productId string) (domain.Product, error) {
 	panic("implement me")
 }
 
 func (p *ProductRepository) CreateProduct(product domain.Product) error {
-	panic("implement me")
+	if err := p.db.Create(&product).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *ProductRepository) UpdateProduct(productId string, product domain.Product) error {
 	panic("implement me")
 }
 
-func (p *ProductRepository) DeleteProduct(productId domain.Product) error {
+func (p *ProductRepository) DeleteProduct(productId string) error {
 	panic("implement me")
 }
