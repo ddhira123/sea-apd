@@ -10,17 +10,19 @@ type ProductRepository struct {
 }
 
 func NewProductRepository(db *gorm.DB) domain.ProductRepository {
-	db.AutoMigrate(&domain.Product{})
+	if db != nil {
+		db.AutoMigrate(&domain.Product{})
+	}
 	return &ProductRepository{db: db}
 }
 
 func (p *ProductRepository) GetProducts() ([]domain.Product, error) {
-	var Products []domain.Product
-	err := p.db.Find(&Products).Error
+	var products []domain.Product
+	err := p.db.Find(&products).Error
 	if err != nil {
 		return nil, err
 	}
-	return Products, nil
+	return products, nil
 }
 
 func (p *ProductRepository) GetProductById(product domain.Product) domain.Product {
