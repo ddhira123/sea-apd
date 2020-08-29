@@ -19,6 +19,7 @@ func NewProductController(e *echo.Echo, p domain.ProductUsecase) domain.ProductC
 	}
 	e.GET("/products", c.GetProducts)
 	e.POST("/products", c.CreateProduct)
+	e.GET("/product",c.GetProductById)
 	return c
 }
 
@@ -35,11 +36,6 @@ func (p *ProductController) GetProducts(c echo.Context) error {
 }
 
 func (p *ProductController) CreateProduct(c echo.Context) error {
-	//uploadedFile, _, err := r.FormFile("file")
-	//if err != nil {
-	//	panic("Error processing image")
-	//}
-	//defer uploadedFile.Close()
 	var productRequest request.Product
 	c.Bind(&productRequest)
 	if err := p.usecase.CreateProduct(productRequest); err != nil {
@@ -49,7 +45,16 @@ func (p *ProductController) CreateProduct(c echo.Context) error {
 }
 
 func (p *ProductController) GetProductById(context echo.Context) error {
-	panic("implement me")
+	id := context.QueryParam("productId")
+	res, err := p.usecase.GetProductById(id)
+	if err != nil {
+		return context.JSON(http.StatusNotFound, "Not Found")
+	}
+	s, err := json.Marshal(res)
+	if err != nil {
+		log.Panic("Error")
+	}
+	return context.JSON(http.StatusOK, string(s))
 }
 
 func (p *ProductController) UpdateProduct(context echo.Context) error {

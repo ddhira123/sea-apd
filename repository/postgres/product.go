@@ -25,8 +25,13 @@ func (p *ProductRepository) GetProducts() ([]domain.Product, error) {
 	return products, nil
 }
 
-func (p *ProductRepository) GetProductById(productId string) (domain.Product, error) {
-	panic("implement me")
+func (p *ProductRepository) GetProductById(productId string) (*domain.Product, error) {
+	var product []domain.Product
+	err := p.db.Find(&product, productId).Error
+	if err != nil || len(product) == 0 {
+		return nil, err
+	}
+	return &product[0], nil
 }
 
 func (p *ProductRepository) CreateProduct(product domain.Product) error {

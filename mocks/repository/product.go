@@ -14,7 +14,7 @@ func (m MockRepository) GetProducts() ([]domain.Product, error) {
 	return []domain.Product{}, nil
 }
 
-func (m MockRepository) GetProductById(s string) (domain.Product, error) {
+func (m MockRepository) GetProductById(s string) (*domain.Product, error) {
 	panic("implement me")
 }
 

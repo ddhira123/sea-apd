@@ -17,7 +17,7 @@ type Product struct {
 
 type ProductUsecase interface {
 	GetProducts() ([]Product, error)
-	GetProductById(string) (Product, error)
+	GetProductById(string) (*Product, error)
 	CreateProduct(request.Product) error
 	UpdateProduct(string, request.Product) error
 	DeleteProduct(string) error
@@ -25,7 +25,7 @@ type ProductUsecase interface {
 
 type ProductRepository interface {
 	GetProducts() ([]Product, error)
-	GetProductById(string) (Product, error)
+	GetProductById(string) (*Product, error)
 	CreateProduct(Product) error
 	UpdateProduct(string, Product) error
 	DeleteProduct(string) error
@@ -39,8 +39,8 @@ type ProductController interface {
 	DeleteProduct(echo.Context) error
 }
 
-func NewProduct(name string, desc string, price int, image string, stock int) *Product {
-	return &Product{
+func NewProduct(name string, desc string, price int, image string, stock int) Product {
+	return Product{
 		Name:        name,
 		Description: desc,
 		Price:       price,

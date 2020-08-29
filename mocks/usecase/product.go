@@ -9,7 +9,7 @@ type MockUsecase struct {
 	ctrl *gomock.Controller
 }
 
-func (m MockUsecase) GetProductById(s string) (domain.Product, error) {
+func (m MockUsecase) GetProductById(s string) (*domain.Product, error) {
 	panic("implement me")
 }
 

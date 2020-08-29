@@ -33,8 +33,12 @@ func (s *ProductUsecase) GetProducts() ([]domain.Product, error) {
 	return p, nil
 }
 
-func (s *ProductUsecase) GetProductById(productId string) (domain.Product, error) {
-	panic("implement me")
+func (s *ProductUsecase) GetProductById(productId string) (*domain.Product, error) {
+	p, err := s.pr.GetProductById(productId)
+	if err != nil || p == nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 func (s *ProductUsecase) CreateProduct(product request.Product) error {
