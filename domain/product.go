@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/dto/request"
 )
 
@@ -28,6 +29,14 @@ type ProductRepository interface {
 	CreateProduct(Product) error
 	UpdateProduct(string, Product) error
 	DeleteProduct(string) error
+}
+
+type ProductController interface {
+	GetProducts(echo.Context) error
+	GetProductById(echo.Context) error
+	CreateProduct(echo.Context) error
+	UpdateProduct(echo.Context) error
+	DeleteProduct(echo.Context) error
 }
 
 func NewProduct(name string, desc string, price int, image string, stock int) *Product {

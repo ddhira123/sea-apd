@@ -15,7 +15,7 @@ func main() {
 	e := echo.New()
 	db := db.Postgres()
 	k := postgres.NewProductRepository(db)
-	t := usecase.NewProductUseCaseImpl(k)
+	t := usecase.NewProductUseCase(k)
 	product.NewProductController(e, t)
 	appPort := ":" + os.Getenv("APP_PORT")
 	appHost := fmt.Sprintf("http://%s%v", os.Getenv("APP_HOST"), appPort)

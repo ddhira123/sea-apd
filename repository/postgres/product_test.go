@@ -119,7 +119,7 @@ func TestProductRepository_GetProducts(t *testing.T) {
 			}
 			products, err := pr.GetProducts()
 			if err != nil && !tt.wantErr {
-				t.Errorf("ProductRepository.Find() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ProductRepository.GetProducts() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(products, tt.want) {

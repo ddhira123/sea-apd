@@ -13,12 +13,13 @@ type ProductController struct {
 	usecase domain.ProductUsecase
 }
 
-func NewProductController(e *echo.Echo, p domain.ProductUsecase) {
+func NewProductController(e *echo.Echo, p domain.ProductUsecase) domain.ProductController {
 	c := &ProductController{
 		usecase: p,
 	}
 	e.GET("/products", c.GetProducts)
 	e.POST("/products", c.CreateProduct)
+	return c
 }
 
 func (p *ProductController) GetProducts(c echo.Context) error {
@@ -45,4 +46,16 @@ func (p *ProductController) CreateProduct(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, "err")
 	}
 	return c.JSON(http.StatusOK, "err")
+}
+
+func (p *ProductController) GetProductById(context echo.Context) error {
+	panic("implement me")
+}
+
+func (p *ProductController) UpdateProduct(context echo.Context) error {
+	panic("implement me")
+}
+
+func (p *ProductController) DeleteProduct(context echo.Context) error {
+	panic("implement me")
 }

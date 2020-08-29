@@ -5,7 +5,7 @@ import (
 	"github.com/williamchang80/sea-apd/dto/request"
 )
 
-type ProductUseCaseImpl struct {
+type ProductUsecase struct {
 	pr domain.ProductRepository
 }
 
@@ -19,13 +19,13 @@ func ConvertToDomain(p request.Product) domain.Product {
 	}
 }
 
-func NewProductUseCaseImpl(p domain.ProductRepository) domain.ProductUsecase {
-	return &ProductUseCaseImpl{
+func NewProductUseCase(p domain.ProductRepository) domain.ProductUsecase {
+	return &ProductUsecase{
 		pr: p,
 	}
 }
 
-func (s *ProductUseCaseImpl) GetProducts() ([]domain.Product, error) {
+func (s *ProductUsecase) GetProducts() ([]domain.Product, error) {
 	p, err := s.pr.GetProducts()
 	if err != nil {
 		return nil, err
@@ -33,11 +33,11 @@ func (s *ProductUseCaseImpl) GetProducts() ([]domain.Product, error) {
 	return p, nil
 }
 
-func (s *ProductUseCaseImpl) GetProductById(productId string) (domain.Product, error) {
+func (s *ProductUsecase) GetProductById(productId string) (domain.Product, error) {
 	panic("implement me")
 }
 
-func (s *ProductUseCaseImpl) CreateProduct(product request.Product) error {
+func (s *ProductUsecase) CreateProduct(product request.Product) error {
 	p := ConvertToDomain(product)
 	err := s.pr.CreateProduct(p)
 	if err != nil {
@@ -46,10 +46,10 @@ func (s *ProductUseCaseImpl) CreateProduct(product request.Product) error {
 	return nil
 }
 
-func (s *ProductUseCaseImpl) UpdateProduct(productId string, product request.Product) error {
+func (s *ProductUsecase) UpdateProduct(productId string, product request.Product) error {
 	panic("implement me")
 }
 
-func (s *ProductUseCaseImpl) DeleteProduct(productId string) error {
+func (s *ProductUsecase) DeleteProduct(productId string) error {
 	panic("implement me")
 }
