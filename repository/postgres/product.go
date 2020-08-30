@@ -46,5 +46,8 @@ func (p *ProductRepository) UpdateProduct(productId string, product domain.Produ
 }
 
 func (p *ProductRepository) DeleteProduct(productId string) error {
-	panic("implement me")
+	if err := p.db.Delete(&domain.Product{}, productId).Error; err != nil {
+		return err
+	}
+	return nil
 }

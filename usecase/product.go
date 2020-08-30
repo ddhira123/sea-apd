@@ -55,5 +55,9 @@ func (s *ProductUsecase) UpdateProduct(productId string, product request.Product
 }
 
 func (s *ProductUsecase) DeleteProduct(productId string) error {
-	panic("implement me")
+	err := s.pr.DeleteProduct(productId)
+	if err != nil {
+		return err
+	}
+	return nil
 }

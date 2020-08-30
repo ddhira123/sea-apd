@@ -19,7 +19,8 @@ func NewProductController(e *echo.Echo, p domain.ProductUsecase) domain.ProductC
 	}
 	e.GET("/products", c.GetProducts)
 	e.POST("/products", c.CreateProduct)
-	e.GET("/product",c.GetProductById)
+	e.GET("/product", c.GetProductById)
+	e.DELETE("/product", c.DeleteProduct)
 	return c
 }
 
@@ -58,9 +59,16 @@ func (p *ProductController) GetProductById(context echo.Context) error {
 }
 
 func (p *ProductController) UpdateProduct(context echo.Context) error {
-	panic("implement me")
+	context.FormValue("productRequest")
+	//TODO implement later
+	return nil
 }
 
 func (p *ProductController) DeleteProduct(context echo.Context) error {
-	panic("implement me")
+	id := context.QueryParam("productId")
+	err := p.usecase.DeleteProduct(id)
+	if err != nil {
+		return context.JSON(http.StatusNotFound, "Not Found")
+	}
+	return context.JSON(http.StatusOK, "Success")
 }

@@ -95,3 +95,89 @@ func TestProductController_GetProducts(t *testing.T) {
 		})
 	}
 }
+
+func TestProductController_CreateProduct(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	type args struct {
+		ctx *echo.Echo
+	}
+
+	defer ctrl.Finish()
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() domain.ProductUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: echo.New(),
+			},
+			wantErr: false,
+			initMock: func() domain.ProductUsecase {
+				c := usecase.NewMockUsecase(ctrl)
+				return usecase2.NewProductUseCase(c)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := tt.initMock()
+			c := echo.New()
+			req, err := http.NewRequest(echo.POST, "/product", strings.NewReader(""))
+			if err != nil {
+				t.Errorf("CreateProduct() request error= %v", tt.wantErr)
+			}
+			rec := httptest.NewRecorder()
+			ctx := c.NewContext(req, rec)
+			controller := NewProductController(c, mock)
+			if got := controller.CreateProduct(ctx); (got != nil) != tt.wantErr {
+				t.Errorf("CreateProduct() error= %v, want %v", got, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestProductController_DeleteProduct(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	type args struct {
+		ctx *echo.Echo
+	}
+
+	defer ctrl.Finish()
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() domain.ProductUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				ctx: echo.New(),
+			},
+			wantErr: false,
+			initMock: func() domain.ProductUsecase {
+				c := usecase.NewMockUsecase(ctrl)
+				return usecase2.NewProductUseCase(c)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := tt.initMock()
+			c := echo.New()
+			req, err := http.NewRequest(echo.DELETE, "/product", strings.NewReader(""))
+			if err != nil {
+				t.Errorf("DeleteProduct() request error= %v", tt.wantErr)
+			}
+			rec := httptest.NewRecorder()
+			ctx := c.NewContext(req, rec)
+			controller := NewProductController(c, mock)
+			if got := controller.DeleteProduct(ctx); (got != nil) != tt.wantErr {
+				t.Errorf("DeleteProduct() error= %v, want %v", got, tt.wantErr)
+			}
+		})
+	}
+}
