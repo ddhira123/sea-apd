@@ -1,9 +1,9 @@
-package usecase
+package product
 
 import (
 	"github.com/golang/mock/gomock"
-	"github.com/williamchang80/sea-apd/domain"
-	"github.com/williamchang80/sea-apd/dto/request"
+	"github.com/williamchang80/sea-apd/domain/product"
+	request "github.com/williamchang80/sea-apd/dto/request/product"
 	repository2 "github.com/williamchang80/sea-apd/mocks/repository"
 	"os"
 	"reflect"
@@ -12,12 +12,12 @@ import (
 
 func TestNewProductUseCase(t *testing.T) {
 	type args struct {
-		repository domain.ProductRepository
+		repository product.ProductRepository
 	}
 	tests := []struct {
 		name string
 		args args
-		want domain.ProductUsecase
+		want product.ProductUsecase
 	}{
 		{
 			name: "success",
@@ -43,24 +43,24 @@ func TestProductUseCase_GetProducts(t *testing.T) {
 	defer ctrl.Finish()
 	tests := []struct {
 		name     string
-		want     []domain.Product
+		want     []product.Product
 		wantErr  bool
-		initMock func() domain.ProductUsecase
+		initMock func() product.ProductUsecase
 	}{
 		{
 			name:    "success",
-			want:    []domain.Product{},
+			want:    []product.Product{},
 			wantErr: false,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
 		{
 			name:    "failed with error as return type",
-			want:    []domain.Product{},
+			want:    []product.Product{},
 			wantErr: true,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -83,17 +83,17 @@ func TestProductUseCase_GetProducts(t *testing.T) {
 
 func TestConvertToDomain(t *testing.T) {
 	type args struct {
-		productRequest request.Product
+		productRequest request.ProductRequest
 	}
 	tests := []struct {
 		name string
 		args args
-		want domain.Product
+		want product.Product
 	}{
 		{
 			name: "success",
 			args: args{
-				productRequest: request.Product{
+				productRequest: request.ProductRequest{
 					Name:        "Mock name",
 					Stock:       10,
 					Description: "Mock desc",
@@ -101,7 +101,7 @@ func TestConvertToDomain(t *testing.T) {
 					Image:       nil,
 				},
 			},
-			want: domain.Product{
+			want: product.Product{
 				Name:        "Mock name",
 				Stock:       10,
 				Description: "Mock desc",
@@ -129,18 +129,24 @@ func TestProductUsecase_GetProductById(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		want     *domain.Product
+		want     *product.Product
 		wantErr  bool
-		initMock func() domain.ProductUsecase
+		initMock func() product.ProductUsecase
 	}{
 		{
 			name: "success",
 			args: args{
 				id: "Mock id",
 			},
-			want:    &domain.Product{},
+			want: &product.Product{
+				Name:        "Mock Name",
+				Description: "Mock Desc",
+				Price:       20,
+				Image:       "Mock image",
+				Stock:       30,
+			},
 			wantErr: false,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -151,7 +157,7 @@ func TestProductUsecase_GetProductById(t *testing.T) {
 				id: "",
 			},
 			wantErr: true,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -183,7 +189,7 @@ func TestProductUsecase_DeleteProduct(t *testing.T) {
 		name     string
 		args     args
 		wantErr  bool
-		initMock func() domain.ProductUsecase
+		initMock func() product.ProductUsecase
 	}{
 		{
 			name: "success",
@@ -191,7 +197,7 @@ func TestProductUsecase_DeleteProduct(t *testing.T) {
 				id: "Mock id",
 			},
 			wantErr: false,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -202,7 +208,7 @@ func TestProductUsecase_DeleteProduct(t *testing.T) {
 				id: "",
 			},
 			wantErr: true,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -227,18 +233,18 @@ func TestProductUsecase_CreateProduct(t *testing.T) {
 	defer image.Close()
 	defer ctrl.Finish()
 	type args struct {
-		request request.Product
+		request request.ProductRequest
 	}
 	tests := []struct {
 		name     string
 		args     args
 		wantErr  bool
-		initMock func() domain.ProductUsecase
+		initMock func() product.ProductUsecase
 	}{
 		{
 			name: "success",
 			args: args{
-				request: request.Product{
+				request: request.ProductRequest{
 					Name:        "Mock name",
 					Stock:       10,
 					Description: "Mock desc",
@@ -247,7 +253,7 @@ func TestProductUsecase_CreateProduct(t *testing.T) {
 				},
 			},
 			wantErr: false,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -255,10 +261,10 @@ func TestProductUsecase_CreateProduct(t *testing.T) {
 		{
 			name: "failed with empty object request",
 			args: args{
-				request: request.Product{},
+				request: request.ProductRequest{},
 			},
 			wantErr: true,
-			initMock: func() domain.ProductUsecase {
+			initMock: func() product.ProductUsecase {
 				r := repository2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
@@ -270,6 +276,65 @@ func TestProductUsecase_CreateProduct(t *testing.T) {
 			err := c.CreateProduct(tt.args.request)
 			if err != nil && !tt.wantErr {
 				t.Errorf("ProductUsecase.DeleteProduct() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestProductUsecase_UpdateProduct(t *testing.T) {
+	const FILE_PATH = "../mocks/file/mock_image.jpg"
+	ctrl := gomock.NewController(t)
+	image, _ := os.Open(FILE_PATH)
+	defer image.Close()
+	defer ctrl.Finish()
+	type args struct {
+		request   request.ProductRequest
+		productId string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() product.ProductUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				request: request.ProductRequest{
+					Name:        "Mock name",
+					Stock:       10,
+					Description: "Mock desc",
+					Price:       20,
+					Image:       image,
+				},
+				productId: "1",
+			},
+			wantErr: false,
+			initMock: func() product.ProductUsecase {
+				r := repository2.NewMockRepository(ctrl)
+				return NewProductUseCase(r)
+			},
+		},
+		{
+			name: "failed with empty object request",
+			args: args{
+				request: request.ProductRequest{},
+				productId: "",
+			},
+			wantErr: true,
+			initMock: func() product.ProductUsecase {
+				r := repository2.NewMockRepository(ctrl)
+				return NewProductUseCase(r)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.initMock()
+			err := c.UpdateProduct(tt.args.productId, tt.args.request)
+			if err != nil && !tt.wantErr {
+				t.Errorf("ProductUsecase.UpdateProduct() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

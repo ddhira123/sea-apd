@@ -1,10 +1,10 @@
-package request
+package product
 
 import (
 	"mime/multipart"
 )
 
-type Product struct {
+type ProductRequest struct {
 	Name string
 	Stock int
 	Description string

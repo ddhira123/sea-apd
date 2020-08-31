@@ -1,9 +1,9 @@
-package domain
+package product
 
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
-	"github.com/williamchang80/sea-apd/dto/request"
+	"github.com/williamchang80/sea-apd/dto/request/product"
 )
 
 type Product struct {
@@ -18,8 +18,8 @@ type Product struct {
 type ProductUsecase interface {
 	GetProducts() ([]Product, error)
 	GetProductById(string) (*Product, error)
-	CreateProduct(request.Product) error
-	UpdateProduct(string, request.Product) error
+	CreateProduct(product.ProductRequest) error
+	UpdateProduct(string, product.ProductRequest) error
 	DeleteProduct(string) error
 }
 

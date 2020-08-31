@@ -1,16 +1,16 @@
-package usecase
+package product
 
 import (
-	"github.com/williamchang80/sea-apd/domain"
-	"github.com/williamchang80/sea-apd/dto/request"
+	"github.com/williamchang80/sea-apd/domain/product"
+	request "github.com/williamchang80/sea-apd/dto/request/product"
 )
 
 type ProductUsecase struct {
-	pr domain.ProductRepository
+	pr product.ProductRepository
 }
 
-func ConvertToDomain(p request.Product) domain.Product {
-	return domain.Product{
+func ConvertToDomain(p request.ProductRequest) product.Product {
+	return product.Product{
 		Name:        p.Name,
 		Description: p.Description,
 		Price:       p.Price,
@@ -19,13 +19,13 @@ func ConvertToDomain(p request.Product) domain.Product {
 	}
 }
 
-func NewProductUseCase(p domain.ProductRepository) domain.ProductUsecase {
+func NewProductUseCase(p product.ProductRepository) product.ProductUsecase {
 	return &ProductUsecase{
 		pr: p,
 	}
 }
 
-func (s *ProductUsecase) GetProducts() ([]domain.Product, error) {
+func (s *ProductUsecase) GetProducts() ([]product.Product, error) {
 	p, err := s.pr.GetProducts()
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (s *ProductUsecase) GetProducts() ([]domain.Product, error) {
 	return p, nil
 }
 
-func (s *ProductUsecase) GetProductById(productId string) (*domain.Product, error) {
+func (s *ProductUsecase) GetProductById(productId string) (*product.Product, error) {
 	p, err := s.pr.GetProductById(productId)
 	if err != nil || p == nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (s *ProductUsecase) GetProductById(productId string) (*domain.Product, erro
 	return p, nil
 }
 
-func (s *ProductUsecase) CreateProduct(product request.Product) error {
+func (s *ProductUsecase) CreateProduct(product request.ProductRequest) error {
 	p := ConvertToDomain(product)
 	err := s.pr.CreateProduct(p)
 	if err != nil {
@@ -50,7 +50,7 @@ func (s *ProductUsecase) CreateProduct(product request.Product) error {
 	return nil
 }
 
-func (s *ProductUsecase) UpdateProduct(productId string, request request.Product) error {
+func (s *ProductUsecase) UpdateProduct(productId string, request request.ProductRequest) error {
 	p := ConvertToDomain(request)
 	err := s.pr.UpdateProduct(productId, p)
 	if err != nil {

@@ -2,22 +2,22 @@ package postgres
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/williamchang80/sea-apd/domain"
+	"github.com/williamchang80/sea-apd/domain/product"
 )
 
 type ProductRepository struct {
 	db *gorm.DB
 }
 
-func NewProductRepository(db *gorm.DB) domain.ProductRepository {
+func NewProductRepository(db *gorm.DB) product.ProductRepository {
 	if db != nil {
-		db.AutoMigrate(&domain.Product{})
+		db.AutoMigrate(&product.Product{})
 	}
 	return &ProductRepository{db: db}
 }
 
-func (p *ProductRepository) GetProducts() ([]domain.Product, error) {
-	var products []domain.Product
+func (p *ProductRepository) GetProducts() ([]product.Product, error) {
+	var products []product.Product
 	err := p.db.Find(&products).Error
 	if err != nil {
 		return nil, err
@@ -25,23 +25,23 @@ func (p *ProductRepository) GetProducts() ([]domain.Product, error) {
 	return products, nil
 }
 
-func (p *ProductRepository) GetProductById(productId string) (*domain.Product, error) {
-	var product []domain.Product
-	err := p.db.Find(&product, productId).Error
-	if err != nil || len(product) == 0 {
+func (p *ProductRepository) GetProductById(productId string) (*product.Product, error) {
+	var product product.Product
+	err := p.db.Find(&product, productId).Limit(1).Error
+	if err != nil {
 		return nil, err
 	}
-	return &product[0], nil
+	return &product, nil
 }
 
-func (p *ProductRepository) CreateProduct(product domain.Product) error {
+func (p *ProductRepository) CreateProduct(product product.Product) error {
 	if err := p.db.Create(&product).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (p *ProductRepository) UpdateProduct(productId string, product domain.Product) error {
+func (p *ProductRepository) UpdateProduct(productId string, product product.Product) error {
 	if err := p.db.Model(&product).Where("id = " + productId).Update(&product).Error; err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (p *ProductRepository) UpdateProduct(productId string, product domain.Produ
 }
 
 func (p *ProductRepository) DeleteProduct(productId string) error {
-	if err := p.db.Delete(&domain.Product{}, productId).Error; err != nil {
+	if err := p.db.Delete(&product.Product{}, productId).Error; err != nil {
 		return err
 	}
 	return nil

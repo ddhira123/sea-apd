@@ -3,35 +3,41 @@ package usecase
 import (
 	"errors"
 	"github.com/golang/mock/gomock"
-	"github.com/williamchang80/sea-apd/domain"
+	"github.com/williamchang80/sea-apd/domain/product"
 )
 
-var emptyProduct = domain.Product{}
+var emptyProduct = product.Product{}
 
 type MockUsecase struct {
 	ctrl *gomock.Controller
 }
 
-func (m MockUsecase) GetProductById(s string) (*domain.Product, error) {
-	panic("implement me")
+func (m MockUsecase) GetProductById(s string) (*product.Product, error) {
+	if s != "" {
+		return &emptyProduct, nil
+	}
+	return nil, errors.New("Cannot Get Product By Id")
 }
 
-func (m MockUsecase) CreateProduct(product domain.Product) error {
+func (m MockUsecase) CreateProduct(product product.Product) error {
 	if product == emptyProduct {
-		return errors.New("Mock Error")
+		return errors.New("Cannot Create Product")
 	}
 	return nil
 }
 
-func (m MockUsecase) UpdateProduct(s string, product domain.Product) error {
-	panic("implement me")
-}
-
-func (m MockUsecase) DeleteProduct(id string) error {
-	if id != "" {
+func (m MockUsecase) UpdateProduct(productId string, product product.Product) error {
+	if productId != "" && product != emptyProduct {
 		return nil
 	}
-	return errors.New("Mock Error")
+	return errors.New("Cannot Update Product")
+}
+
+func (m MockUsecase) DeleteProduct(productId string) error {
+	if productId != "" {
+		return nil
+	}
+	return errors.New("Cannot Delete Product")
 }
 
 func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
@@ -40,7 +46,7 @@ func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 	}
 }
 
-func (m MockUsecase) GetProducts() ([]domain.Product, error) {
+func (m MockUsecase) GetProducts() ([]product.Product, error) {
 	m.ctrl.T.Helper()
-	return []domain.Product{}, nil
+	return []product.Product{}, nil
 }

@@ -3,24 +3,23 @@ package product
 import (
 	"encoding/json"
 	"github.com/labstack/echo"
-	"github.com/williamchang80/sea-apd/domain"
-	"github.com/williamchang80/sea-apd/dto/request"
-	"log"
+	"github.com/williamchang80/sea-apd/domain/product"
+	request "github.com/williamchang80/sea-apd/dto/request/product"
 	"net/http"
 )
 
 type ProductController struct {
-	usecase domain.ProductUsecase
+	usecase product.ProductUsecase
 }
 
-func NewProductController(e *echo.Echo, p domain.ProductUsecase) domain.ProductController {
+func NewProductController(e *echo.Echo, p product.ProductUsecase) product.ProductController {
 	c := &ProductController{
 		usecase: p,
 	}
 	e.GET("/products", c.GetProducts)
 	e.POST("/products", c.CreateProduct)
 	e.GET("/product", c.GetProductById)
-	e.PUT("/product",c.UpdateProduct)
+	e.PUT("/product", c.UpdateProduct)
 	e.DELETE("/product", c.DeleteProduct)
 	return c
 }
@@ -28,17 +27,17 @@ func NewProductController(e *echo.Echo, p domain.ProductUsecase) domain.ProductC
 func (p *ProductController) GetProducts(c echo.Context) error {
 	products, err := p.usecase.GetProducts()
 	if err != nil {
-		log.Panic("Error")
+		c.JSON(http.StatusNotFound, "Not found")
 	}
 	s, err := json.Marshal(products)
 	if err != nil {
-		log.Panic("Error")
+		c.JSON(http.StatusInternalServerError, "Not found")
 	}
 	return c.JSON(http.StatusOK, string(s))
 }
 
 func (p *ProductController) CreateProduct(c echo.Context) error {
-	var productRequest request.Product
+	var productRequest request.ProductRequest
 	c.Bind(&productRequest)
 	if err := p.usecase.CreateProduct(productRequest); err != nil {
 		return c.JSON(http.StatusInternalServerError, "err")
@@ -54,18 +53,18 @@ func (p *ProductController) GetProductById(context echo.Context) error {
 	}
 	s, err := json.Marshal(res)
 	if err != nil {
-		log.Panic("Error")
+		return context.JSON(http.StatusInternalServerError, "Error")
 	}
 	return context.JSON(http.StatusOK, string(s))
 }
 
 func (p *ProductController) UpdateProduct(context echo.Context) error {
-	var productRequest request.Product
+	var productRequest request.ProductRequest
 	context.Bind(&productRequest)
 	productId := context.FormValue("productId")
 	err := p.usecase.UpdateProduct(productId, productRequest)
 	if err != nil {
-		log.Panic("Error")
+		return context.JSON(http.StatusNotFound, "Not Found")
 	}
 	return context.JSON(http.StatusOK, "success")
 }
