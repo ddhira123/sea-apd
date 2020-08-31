@@ -42,7 +42,10 @@ func (p *ProductRepository) CreateProduct(product domain.Product) error {
 }
 
 func (p *ProductRepository) UpdateProduct(productId string, product domain.Product) error {
-	panic("implement me")
+	if err := p.db.Model(&product).Where("id = " + productId).Update(&product).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *ProductRepository) DeleteProduct(productId string) error {

@@ -50,8 +50,13 @@ func (s *ProductUsecase) CreateProduct(product request.Product) error {
 	return nil
 }
 
-func (s *ProductUsecase) UpdateProduct(productId string, product request.Product) error {
-	panic("implement me")
+func (s *ProductUsecase) UpdateProduct(productId string, request request.Product) error {
+	p := ConvertToDomain(request)
+	err := s.pr.UpdateProduct(productId, p)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *ProductUsecase) DeleteProduct(productId string) error {
