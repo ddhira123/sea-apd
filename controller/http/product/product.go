@@ -1,10 +1,13 @@
 package product
 
 import (
-	"encoding/json"
 	"github.com/labstack/echo"
+	message "github.com/williamchang80/sea-apd/common/constants/response"
 	"github.com/williamchang80/sea-apd/domain/product"
+	"github.com/williamchang80/sea-apd/dto/domain"
 	request "github.com/williamchang80/sea-apd/dto/request/product"
+	"github.com/williamchang80/sea-apd/dto/response/base"
+	response "github.com/williamchang80/sea-apd/dto/response/product"
 	"net/http"
 )
 
@@ -27,35 +30,50 @@ func NewProductController(e *echo.Echo, p product.ProductUsecase) product.Produc
 func (p *ProductController) GetProducts(c echo.Context) error {
 	products, err := p.usecase.GetProducts()
 	if err != nil {
-		c.JSON(http.StatusNotFound, "Not found")
+		c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
 	}
-	s, err := json.Marshal(products)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, "Not found")
-	}
-	return c.JSON(http.StatusOK, string(s))
+
+	return c.JSON(http.StatusOK, &response.GetProductsResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+		Data:    domain.ProductListDto{Products: products},
+	})
 }
 
 func (p *ProductController) CreateProduct(c echo.Context) error {
 	var productRequest request.ProductRequest
 	c.Bind(&productRequest)
 	if err := p.usecase.CreateProduct(productRequest); err != nil {
-		return c.JSON(http.StatusInternalServerError, "err")
+		return c.JSON(http.StatusUnprocessableEntity, &base.BaseResponse{
+			Code:    http.StatusBadRequest,
+			Message: message.BAD_REQUEST,
+		})
 	}
-	return c.JSON(http.StatusOK, "err")
+	return c.JSON(http.StatusOK, &base.BaseResponse{
+		Code:    http.StatusCreated,
+		Message: message.SUCCESS,
+	})
 }
 
 func (p *ProductController) GetProductById(context echo.Context) error {
 	id := context.QueryParam("productId")
-	res, err := p.usecase.GetProductById(id)
+	product, err := p.usecase.GetProductById(id)
 	if err != nil {
-		return context.JSON(http.StatusNotFound, "Not Found")
+		return context.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
 	}
-	s, err := json.Marshal(res)
-	if err != nil {
-		return context.JSON(http.StatusInternalServerError, "Error")
-	}
-	return context.JSON(http.StatusOK, string(s))
+	return context.JSON(http.StatusOK, &response.GetProductByIdResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+		Data: domain.ProductDto{
+			Product: *product,
+		},
+	})
 }
 
 func (p *ProductController) UpdateProduct(context echo.Context) error {
@@ -64,16 +82,28 @@ func (p *ProductController) UpdateProduct(context echo.Context) error {
 	productId := context.FormValue("productId")
 	err := p.usecase.UpdateProduct(productId, productRequest)
 	if err != nil {
-		return context.JSON(http.StatusNotFound, "Not Found")
+		return context.JSON(http.StatusBadRequest, &base.BaseResponse{
+			Code:    http.StatusBadRequest,
+			Message: message.BAD_REQUEST,
+		})
 	}
-	return context.JSON(http.StatusOK, "success")
+	return context.JSON(http.StatusOK, &base.BaseResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+	})
 }
 
 func (p *ProductController) DeleteProduct(context echo.Context) error {
 	id := context.QueryParam("productId")
 	err := p.usecase.DeleteProduct(id)
 	if err != nil {
-		return context.JSON(http.StatusNotFound, "Not Found")
+		return context.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
 	}
-	return context.JSON(http.StatusOK, "Success")
+	return context.JSON(http.StatusOK, &base.BaseResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+	})
 }
