@@ -19,11 +19,11 @@ func NewProductController(e *echo.Echo, p product.ProductUsecase) product.Produc
 	c := &ProductController{
 		usecase: p,
 	}
-	e.GET("/products", c.GetProducts)
-	e.POST("/products", c.CreateProduct)
-	e.GET("/product", c.GetProductById)
-	e.PUT("/product", c.UpdateProduct)
-	e.DELETE("/product", c.DeleteProduct)
+	e.GET("/api/products", c.GetProducts)
+	e.POST("/api/product", c.CreateProduct)
+	e.GET("/api/product", c.GetProductById)
+	e.PUT("/api/product", c.UpdateProduct)
+	e.DELETE("/api/product", c.DeleteProduct)
 	return c
 }
 
