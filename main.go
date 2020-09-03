@@ -2,19 +2,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
-	"log"
+	"github.com/labstack/echo"
+	"github.com/williamchang80/sea-apd/routes"
 	"net/http"
 	"os"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Cannot read .env file")
-	}
+	e := echo.New()
+	routes.InitMainRoutes(e)
 	appPort := ":" + os.Getenv("APP_PORT")
 	appHost := fmt.Sprintf("http://%s%v", os.Getenv("APP_HOST"), appPort)
 	fmt.Println("App is running on " + appHost)
-	http.ListenAndServe(appPort, nil)
+	http.ListenAndServe(appPort, e)
 }
