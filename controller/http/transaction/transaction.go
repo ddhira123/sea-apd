@@ -21,7 +21,19 @@ func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) tr
 }
 
 func (t *TransactionController) CreateTransaction(c echo.Context) error {
-	return c.JSON(http.StatusOK, "success")
+	var request transaction2.TransactionRequest
+	c.Bind(&request)
+	err := t.usecase.CreateTransaction(request)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, &base.BaseResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+	})
 }
 
 func (t *TransactionController) UpdateTransactionStatus(c echo.Context) error {

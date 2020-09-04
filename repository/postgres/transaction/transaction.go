@@ -18,8 +18,9 @@ func NewTransactionRepository(db *gorm.DB) transaction.TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
-func (t TransactionRepository) CreateTransaction(t2 transaction.Transaction) error {
-	panic("implement me")
+func (t TransactionRepository) CreateTransaction(tr transaction.Transaction) error {
+	err := t.db.Create(&tr).Error
+	return err
 }
 
 func (t TransactionRepository) UpdateTransactionStatus(status string, id string) error {

@@ -14,7 +14,7 @@ type Transaction struct {
 	BankName   string `json:"bank_name"`
 	Amount     int    `json:"amount"`
 	User       user.User
-	UserId     int `gorm:"ForeignKey:id"`
+	UserId     string `gorm:"ForeignKey:id"`
 }
 
 type TransactionUsecase interface {

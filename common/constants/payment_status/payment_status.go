@@ -1,7 +1,9 @@
 package payment_status
 
-const (
-	ACCEPTED    = "accepted"
-	ON_PROGRESS = "on progress"
-	DECLINED    = "declined"
-)
+func GetPaymentStatus() map[string]string {
+	return map[string]string{
+		"ACCEPTED":   "accepted",
+		"ONPROGRESS": "on progress",
+		"DECLINED":   "declined",
+	}
+}

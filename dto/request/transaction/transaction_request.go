@@ -1,13 +1,13 @@
 package transaction
 
 type TransactionRequest struct {
-	BankNumber string
-	BankName   string
-	Amount     int
-	UserId 	   string
+	BankNumber string `json:"bank_number"`
+	BankName   string `json:"bank_name"`
+	Amount     int    `json:"amount"`
+	UserId     string `json:"user_id"`
 }
 
 type UpdateTransactionRequest struct {
-	Id string
+	Id     string
 	Status string
 }
