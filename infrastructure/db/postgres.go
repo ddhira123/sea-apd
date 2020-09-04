@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/joho/godotenv"
 	"os"
 )
 
 const driver = "postgres"
 
 func Postgres() *gorm.DB {
+	godotenv.Load()
 	host := os.Getenv("PG_HOST")
 	port := os.Getenv("PG_PORT")
 	dbname := os.Getenv("PG_NAME")
