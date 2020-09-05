@@ -6,8 +6,8 @@ import (
 	"github.com/labstack/echo"
 	domain "github.com/williamchang80/sea-apd/domain/product"
 	request "github.com/williamchang80/sea-apd/dto/request/product"
-	"github.com/williamchang80/sea-apd/mocks/repository"
-	"github.com/williamchang80/sea-apd/mocks/usecase"
+	product_mock_repository "github.com/williamchang80/sea-apd/mocks/repository/product"
+	product_mock_usecase "github.com/williamchang80/sea-apd/mocks/usecase/product"
 	"github.com/williamchang80/sea-apd/usecase/product"
 	"net/http"
 	"net/http/httptest"
@@ -33,7 +33,7 @@ func TestNewProductController(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	ctx := echo.New()
-	repo := repository.NewMockRepository(ctrl)
+	repo := product_mock_repository.NewMockRepository(ctrl)
 	type args struct {
 		ctx *echo.Echo
 	}
@@ -52,8 +52,8 @@ func TestNewProductController(t *testing.T) {
 				usecase: product.NewProductUseCase(repo),
 			},
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 	}
@@ -88,8 +88,8 @@ func TestProductController_GetProducts(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 	}
@@ -131,18 +131,24 @@ func TestProductController_CreateProduct(t *testing.T) {
 			name: "success",
 			args: args{
 				ctx: echo.New(),
-				request: request.ProductRequest{
-					Name:        "Mock name",
-					Stock:       10,
-					Description: "Mock desc",
-					Price:       20,
-					Image:       image,
-				},
+				request: mockData,
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
+			},
+		},
+		{
+			name: "fail with empty request",
+			args: args{
+				ctx: echo.New(),
+				request: request.ProductRequest{},
+			},
+			wantErr: false,
+			initMock: func() domain.ProductUsecase {
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 	}
@@ -150,8 +156,8 @@ func TestProductController_CreateProduct(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mock := tt.initMock()
 			c := echo.New()
-			data, _ := json.Marshal(mockData)
-			req, err := http.NewRequest(echo.POST, "/product", strings.NewReader(string(data)))
+			data, _ := json.Marshal(tt.args.request)
+			req, err := http.NewRequest(echo.POST, "api/product", strings.NewReader(string(data)))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			if err != nil {
 				t.Errorf("CreateProduct() request error= %v", tt.wantErr)
@@ -192,8 +198,8 @@ func TestProductController_DeleteProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 		{
@@ -207,8 +213,8 @@ func TestProductController_DeleteProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 	}
@@ -216,7 +222,7 @@ func TestProductController_DeleteProduct(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mock := tt.initMock()
 			c := echo.New()
-			req, err := http.NewRequest(echo.DELETE, "/product", strings.NewReader(""))
+			req, err := http.NewRequest(echo.DELETE, "api/product"+"?"+tt.args.getParams().Encode(), strings.NewReader(""))
 			if err != nil {
 				t.Errorf("DeleteProduct() request error= %v", tt.wantErr)
 			}
@@ -260,8 +266,8 @@ func TestProductController_UpdateProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 		{
@@ -271,8 +277,8 @@ func TestProductController_UpdateProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 	}
@@ -281,7 +287,8 @@ func TestProductController_UpdateProduct(t *testing.T) {
 			mock := tt.initMock()
 			c := echo.New()
 			data, _ := json.Marshal(tt.args.request)
-			req, err := http.NewRequest(echo.PUT, "/product", strings.NewReader(string(data)))
+			req, err := http.NewRequest(echo.PUT, "api/product", strings.NewReader(string(data)))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			if err != nil {
 				t.Errorf("DeleteProduct() request error= %v", tt.wantErr)
 			}
@@ -320,8 +327,8 @@ func TestProductController_GetProductById(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 		{
@@ -335,8 +342,8 @@ func TestProductController_GetProductById(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() domain.ProductUsecase {
-				c := usecase.NewMockUsecase(ctrl)
-				return product.NewProductUseCase(c)
+				c := product_mock_usecase.NewMockUsecase(ctrl)
+				return c
 			},
 		},
 	}

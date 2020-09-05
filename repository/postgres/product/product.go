@@ -1,4 +1,4 @@
-package postgres
+package product
 
 import (
 	"github.com/jinzhu/gorm"
