@@ -1,13 +1,13 @@
 package product
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
+	"github.com/williamchang80/sea-apd/domain"
 	"github.com/williamchang80/sea-apd/dto/request/product"
 )
 
 type Product struct {
-	gorm.Model
+	domain.Base
 	Name        string `json:"id"`
 	Description string `json:"description"`
 	Price       int    `json:"price"`

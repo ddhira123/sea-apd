@@ -37,3 +37,12 @@ func (t TransactionRepository) GetTransactionById(id string) (*transaction.Trans
 	}
 	return &tran, nil
 }
+
+func (t TransactionRepository) GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]transaction.Transaction, error) {
+	var transactions []transaction.Transaction
+	err := t.db.Where("status IN (?)", requiredStatus).Where("user_id = ?", userId).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}

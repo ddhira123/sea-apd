@@ -2,13 +2,13 @@ package transaction
 
 import (
 	"errors"
-	"github.com/williamchang80/sea-apd/common/constants/payment_status"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
 	"strings"
 )
 
-var paymentStatus = payment_status.GetPaymentStatus()
+var transactionStatus = transaction_status.GetTransactionStatus()
 
 type TransactionUsecase struct {
 	tr transaction.TransactionRepository
@@ -16,7 +16,7 @@ type TransactionUsecase struct {
 
 func ConvertToDomain(t transaction2.TransactionRequest) transaction.Transaction {
 	return transaction.Transaction{
-		Status:     paymentStatus["ONPROGRESS"],
+		Status:     transactionStatus["ONPROGRESS"],
 		BankNumber: t.BankNumber,
 		BankName:   t.BankName,
 		Amount:     t.Amount,
@@ -35,7 +35,7 @@ func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRe
 }
 
 func (t TransactionUsecase) UpdateTransactionStatus(request transaction2.UpdateTransactionRequest) error {
-	status := paymentStatus[strings.ToUpper(request.Status)]
+	status := transactionStatus[strings.ToUpper(request.Status)]
 	if len(status) == 0 {
 		return errors.New("Cannot find status")
 	}
@@ -51,3 +51,11 @@ func (t TransactionUsecase) GetTransactionById(id string) (*transaction.Transact
 	return tr, nil
 }
 
+func (t TransactionUsecase) GetTransactionHistory(userId string) ([]transaction.Transaction, error) {
+	requiredStatusForTransactionHistory := transaction_status.GetRequiredStatus()
+	tr, err := t.tr.GetTransactionByRequiredStatus(requiredStatusForTransactionHistory, userId)
+	if err != nil {
+		return nil, err
+	}
+	return tr, nil
+}

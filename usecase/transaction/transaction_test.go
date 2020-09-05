@@ -17,7 +17,7 @@ var (
 		UserId:     "1",
 	}
 	mockTransactionEntity = transaction.Transaction{
-		Status:     paymentStatus["ONPROGRESS"],
+		Status:     transactionStatus["ONPROGRESS"],
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
@@ -28,6 +28,7 @@ var (
 		Status: "accepted",
 	}
 	mockTransactionId = "1"
+	mockUserId        = "1"
 )
 
 func TestNewTransactionUsecase(t *testing.T) {
@@ -223,6 +224,54 @@ func TestTransactionUsecase_GetTransactionById(t *testing.T) {
 			c := tt.initMock()
 			if p, err := c.GetTransactionById(tt.args.request); (err != nil || reflect.DeepEqual(p, tt.args)) && !tt.wantErr {
 				t.Errorf("TransactionUsecase.CreateTransaction() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionUsecase_GetTransactionHistory(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	type args struct {
+		request string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		want     []transaction.Transaction
+		initMock func() transaction.TransactionUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				request: mockUserId,
+			},
+			wantErr: false,
+			want:    []transaction.Transaction{},
+			initMock: func() transaction.TransactionUsecase {
+				t := transaction2.NewMockRepository(ctrl)
+				return NewTransactionUsecase(t)
+			},
+		},
+		{
+			name: "failed with unmatched status",
+			args: args{
+				request: "",
+			},
+			wantErr: true,
+			initMock: func() transaction.TransactionUsecase {
+				t := transaction2.NewMockRepository(ctrl)
+				return NewTransactionUsecase(t)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.initMock()
+			if p, err := c.GetTransactionHistory(tt.args.request); (err != nil || reflect.DeepEqual(p, tt.args)) && !tt.wantErr {
+				t.Errorf("TransactionUsecase.GetTransactionHistory() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

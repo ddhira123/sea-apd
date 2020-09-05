@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/gorm"
-	"github.com/williamchang80/sea-apd/common/constants/payment_status"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	domain "github.com/williamchang80/sea-apd/domain/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
 	mock_psql "github.com/williamchang80/sea-apd/mocks/postgres"
@@ -20,7 +20,7 @@ var (
 		Amount:     10000,
 		UserId:     "1",
 	}
-	transactionStatus     = payment_status.GetPaymentStatus()
+	transactionStatus     = transaction_status.GetTransactionStatus()
 	mockTransactionEntity = domain.Transaction{
 		Status:     transactionStatus["ONPROGRESS"],
 		BankNumber: "123456789",

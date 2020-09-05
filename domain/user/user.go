@@ -1,12 +1,8 @@
 package user
 
-import (
-	"time"
-)
+import "github.com/williamchang80/sea-apd/domain"
 
 type User struct {
-	ID        string `json:"id"`
+	domain.Base
 	Username  string `json:"username"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
 }
