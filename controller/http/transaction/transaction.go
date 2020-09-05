@@ -4,8 +4,10 @@ import (
 	"github.com/labstack/echo"
 	message "github.com/williamchang80/sea-apd/common/constants/response"
 	"github.com/williamchang80/sea-apd/domain/transaction"
+	"github.com/williamchang80/sea-apd/dto/domain"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
 	"github.com/williamchang80/sea-apd/dto/response/base"
+	response "github.com/williamchang80/sea-apd/dto/response/transaction"
 	"net/http"
 )
 
@@ -17,6 +19,7 @@ func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) tr
 	c := &TransactionController{usecase: t}
 	e.POST("/api/transaction", c.CreateTransaction)
 	e.POST("/api/transaction/status", c.UpdateTransactionStatus)
+	e.GET("/api/transaction", c.GetTransactionById)
 	return c
 }
 
@@ -49,5 +52,23 @@ func (t *TransactionController) UpdateTransactionStatus(c echo.Context) error {
 	return c.JSON(http.StatusOK, &base.BaseResponse{
 		Code:    http.StatusOK,
 		Message: message.SUCCESS,
+	})
+}
+
+func (t *TransactionController) GetTransactionById(c echo.Context) error {
+	id := c.QueryParam("transactionId")
+	tr, err := t.usecase.GetTransactionById(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, response.GetTransactionByIdResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+		Data: domain.TransactionDto{
+			Transaction: *tr,
+		},
 	})
 }

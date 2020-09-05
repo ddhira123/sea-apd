@@ -14,6 +14,7 @@ import (
 	transaction_usecase "github.com/williamchang80/sea-apd/usecase/transaction"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"strings"
 	"testing"
@@ -197,6 +198,71 @@ func TestTransactionController_UpdateTransactionStatus(t *testing.T) {
 			controller := NewTransactionController(c, mock)
 			if controller.UpdateTransactionStatus(ctx); (rec.Code != tt.want.Code) || tt.wantErr {
 				t.Errorf("UpdateTransactionStatus() error= %v, want %v", rec.Code, tt.want.Code)
+			}
+		})
+	}
+}
+
+func TestTransactionController_GetTransactionById(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	type args struct {
+		ctx       *echo.Echo
+		getParams func() url.Values
+	}
+	defer ctrl.Finish()
+	tests := []struct {
+		name       string
+		args       args
+		wantErr    bool
+		wantStatus int
+		initMock   func() domain.TransactionUsecase
+	}{
+		{
+			name: "failed with empty request and invalid status",
+			args: args{
+				ctx: echo.New(),
+				getParams: func() url.Values {
+					q := make(url.Values)
+					return q
+				},
+			},
+			wantErr:    false,
+			wantStatus: http.StatusNotFound,
+			initMock: func() domain.TransactionUsecase {
+				return transaction_mock_usecase.NewMockUsecase(ctrl)
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				ctx: echo.New(),
+				getParams: func() url.Values {
+					q := make(url.Values)
+					q.Set("transactionId", mockId)
+					return q
+				},
+			},
+			wantErr:    false,
+			wantStatus: http.StatusOK,
+			initMock: func() domain.TransactionUsecase {
+				return transaction_mock_usecase.NewMockUsecase(ctrl)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := tt.initMock()
+			params := tt.args.getParams()
+			c := echo.New()
+			req, err := http.NewRequest(echo.GET, "api/transaction"+"?"+params.Encode(), nil)
+			if err != nil && !tt.wantErr {
+				t.Errorf("GetTransactionById() request error= %v", tt.wantErr)
+			}
+			rec := httptest.NewRecorder()
+			ctx := c.NewContext(req, rec)
+			controller := NewTransactionController(c, mock)
+			if controller.GetTransactionById(ctx); (rec.Code != tt.wantStatus) || tt.wantErr {
+				t.Errorf("GetTransactionById() error= %v, want %v", rec.Code, tt.wantStatus)
 			}
 		})
 	}

@@ -1,8 +1,12 @@
 package user
 
-import "github.com/jinzhu/gorm"
+import (
+	"time"
+)
 
 type User struct {
-	gorm.Model
-	Username string `json:"username"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

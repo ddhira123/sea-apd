@@ -42,3 +42,12 @@ func (t TransactionUsecase) UpdateTransactionStatus(request transaction2.UpdateT
 	err := t.tr.UpdateTransactionStatus(status, request.Id)
 	return err
 }
+
+func (t TransactionUsecase) GetTransactionById(id string) (*transaction.Transaction, error) {
+	tr, err := t.tr.GetTransactionById(id)
+	if err != nil {
+		return nil, err
+	}
+	return tr, nil
+}
+

@@ -3,6 +3,7 @@ package transaction
 import (
 	"errors"
 	"github.com/golang/mock/gomock"
+	domain "github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/dto/request/transaction"
 )
 
@@ -12,7 +13,6 @@ var emptyUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{}
 type MockUsecase struct {
 	ctrl *gomock.Controller
 }
-
 
 func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 	return &MockUsecase{
@@ -32,4 +32,11 @@ func (m MockUsecase) UpdateTransactionStatus(request transaction.UpdateTransacti
 		return errors.New("Request cannot be empty")
 	}
 	return nil
+}
+
+func (m MockUsecase) GetTransactionById(id string) (*domain.Transaction, error) {
+	if len(id) == 0 {
+		return nil, errors.New("Id cannot be empty")
+	}
+	return &domain.Transaction{}, nil
 }

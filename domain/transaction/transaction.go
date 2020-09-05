@@ -19,25 +19,18 @@ type Transaction struct {
 
 type TransactionUsecase interface {
 	CreateTransaction(transaction.TransactionRequest) error
+	GetTransactionById(id string) (*Transaction, error)
 	UpdateTransactionStatus(transaction.UpdateTransactionRequest) error
 }
 
 type TransactionController interface {
 	CreateTransaction(echo.Context) error
+	GetTransactionById(echo.Context) error
 	UpdateTransactionStatus(echo.Context) error
 }
 
 type TransactionRepository interface {
 	CreateTransaction(Transaction) error
 	GetTransactionById(string) (*Transaction, error)
-	UpdateTransactionStatus(string, string) error
-}
-
-func NewTransaction(status string, bankNumber string, bankName string, amount int) Transaction {
-	return Transaction{
-		Status:     status,
-		BankNumber: bankNumber,
-		BankName:   bankName,
-		Amount:     amount,
-	}
+	UpdateTransactionStatus(status string, id string) error
 }
