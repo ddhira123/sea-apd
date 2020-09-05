@@ -54,7 +54,7 @@ func TestNewTransactionController(t *testing.T) {
 				ctx: ctx,
 			},
 			want: &TransactionController{
-				usecase: transaction_usecase.NewTransactionUsecase(repo),
+				usecase: transaction_usecase.NewTransactionUsecase(repo, nil),
 			},
 			initMock: func() domain.TransactionUsecase {
 				return transaction_mock_usecase.NewMockUsecase(ctrl)

@@ -3,6 +3,7 @@ package transaction
 import (
 	"errors"
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
+	"github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
 	"strings"
@@ -11,7 +12,8 @@ import (
 var transactionStatus = transaction_status.GetTransactionStatus()
 
 type TransactionUsecase struct {
-	tr transaction.TransactionRepository
+	tr              transaction.TransactionRepository
+	merchantUseCase merchant.MerchantUsecase
 }
 
 func ConvertToDomain(t transaction2.TransactionRequest) transaction.Transaction {
@@ -24,8 +26,8 @@ func ConvertToDomain(t transaction2.TransactionRequest) transaction.Transaction 
 	}
 }
 
-func NewTransactionUsecase(repo transaction.TransactionRepository) transaction.TransactionUsecase {
-	return &TransactionUsecase{tr: repo}
+func NewTransactionUsecase(repo transaction.TransactionRepository, merchantUseCase merchant.MerchantUsecase) transaction.TransactionUsecase {
+	return &TransactionUsecase{tr: repo, merchantUseCase: merchantUseCase}
 }
 
 func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRequest) error {
