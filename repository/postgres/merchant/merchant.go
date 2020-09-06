@@ -18,10 +18,7 @@ func NewMerchantRepository(db *gorm.DB) merchant.MerchantRepository {
 
 func (m MerchantRepository) UpdateMerchantBalance(amount int, merchantId string) error {
 	var merchant merchant.Merchant
-	if err := m.db.Find(&merchant, merchantId).Error; err != nil {
-		return err
-	}
-	if err := m.db.Model(&merchant).Update("balance", gorm.Expr("balance + ?",
+	if err := m.db.Model(&merchant).Find(&merchant, merchantId).Update("balance", gorm.Expr("balance + ?",
 		amount)).Error; err != nil {
 		return err
 	}

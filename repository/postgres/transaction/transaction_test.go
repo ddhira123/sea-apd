@@ -222,3 +222,52 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 		})
 	}
 }
+
+func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
+	db, mocks := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		productId      string
+		requiredStatus []string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				productId: "0",
+				requiredStatus: []string{
+					transactionStatus["failed"],
+				},
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				mocks.ExpectExec(regexp.QuoteMeta(`
+					UPDATE "transactions" 
+					SET "status" = $1
+					WHERE "transactions"."deleted_at" 
+						IS NULL AND ((id = 0))
+				`)).WithArgs(transactionStatus["Accepted"]).
+					WillReturnError(errors.New("No data found"))
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := TransactionRepository{
+				db: tt.initMock(),
+			}
+			_, err := pr.GetTransactionByRequiredStatus(tt.args.requiredStatus, tt.args.productId)
+			if err != nil && !tt.wantErr {
+				t.Errorf("TransactionRepository.GetTransactionByRequiredStatus() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
