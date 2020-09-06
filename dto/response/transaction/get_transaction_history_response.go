@@ -1,9 +1,11 @@
 package transaction
 
-import "github.com/williamchang80/sea-apd/domain/transaction"
+import (
+	"github.com/williamchang80/sea-apd/domain/transaction"
+	"github.com/williamchang80/sea-apd/dto/response/base"
+)
 
 type GetTransactionHistoryResponse struct {
-	Code    int                       `json:"code"`
-	Message string                    `json:"message"`
-	Data    []transaction.Transaction `json:"data"`
+	base.BaseResponse
+	Data []transaction.Transaction `json:"data"`
 }

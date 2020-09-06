@@ -66,8 +66,10 @@ func (t *TransactionController) GetTransactionById(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, response.GetTransactionByIdResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
 		Data: domain.TransactionDto{
 			Transaction: *tr,
 		},
@@ -84,8 +86,10 @@ func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, response.GetTransactionHistoryResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
-		Data:    tr,
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: tr,
 	})
 }

@@ -1,9 +1,11 @@
 package transaction
 
-import "github.com/williamchang80/sea-apd/dto/domain"
+import (
+	"github.com/williamchang80/sea-apd/dto/domain"
+	"github.com/williamchang80/sea-apd/dto/response/base"
+)
 
 type GetTransactionByIdResponse struct {
-	Code    int                   `json:"code"`
-	Message string                `json:"message"`
-	Data    domain.TransactionDto `json:"data"`
+	base.BaseResponse
+	Data domain.TransactionDto `json:"data"`
 }

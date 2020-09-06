@@ -15,5 +15,16 @@ func NewMerchantUsecase(m merchant.MerchantRepository) merchant.MerchantUsecase 
 }
 
 func (m MerchantUsecase) UpdateMerchantBalance(request request.UpdateMerchantBalanceRequest) error {
-	panic("implement me")
+	if err := m.mc.UpdateMerchantBalance(request.Amount, request.MerchantId); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m MerchantUsecase) GetMerchantBalance(merchantId string) (int, error) {
+	balance, err := m.mc.GetMerchantBalance(merchantId)
+	if err != nil {
+		return 0, err
+	}
+	return balance, nil
 }

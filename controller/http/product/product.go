@@ -37,9 +37,11 @@ func (p *ProductController) GetProducts(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &response.GetProductsResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
-		Data:    domain.ProductListDto{Products: products},
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: domain.ProductListDto{Products: products},
 	})
 }
 
@@ -68,8 +70,10 @@ func (p *ProductController) GetProductById(context echo.Context) error {
 		})
 	}
 	return context.JSON(http.StatusOK, &response.GetProductByIdResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
 		Data: domain.ProductDto{
 			Product: *product,
 		},

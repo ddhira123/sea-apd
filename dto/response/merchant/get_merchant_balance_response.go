@@ -1,11 +1,11 @@
-package product
+package merchant
 
 import (
 	"github.com/williamchang80/sea-apd/dto/domain"
 	"github.com/williamchang80/sea-apd/dto/response/base"
 )
 
-type GetProductByIdResponse struct {
+type GetMerchantBalanceResponse struct {
 	base.BaseResponse
-	Data domain.ProductDto `json:"data"`
+	Data domain.MerchantBalanceDto `json:"data"`
 }

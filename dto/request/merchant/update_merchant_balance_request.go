@@ -1,6 +1,6 @@
 package merchant
 
 type UpdateMerchantBalanceRequest struct {
-	Amount int
-	MerchantId string
+	Amount int `json:"amount"`
+	MerchantId string `json:"merchant_id"`
 }
