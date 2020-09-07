@@ -4,7 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/williamchang80/sea-apd/domain/product"
 	request "github.com/williamchang80/sea-apd/dto/request/product"
-	repository2 "github.com/williamchang80/sea-apd/mocks/repository"
+	product2 "github.com/williamchang80/sea-apd/mocks/repository/product"
 	"os"
 	"reflect"
 	"testing"
@@ -52,7 +52,7 @@ func TestProductUseCase_GetProducts(t *testing.T) {
 			want:    []product.Product{},
 			wantErr: false,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -61,7 +61,7 @@ func TestProductUseCase_GetProducts(t *testing.T) {
 			want:    []product.Product{},
 			wantErr: true,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -147,7 +147,7 @@ func TestProductUsecase_GetProductById(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -158,7 +158,7 @@ func TestProductUsecase_GetProductById(t *testing.T) {
 			},
 			wantErr: true,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -198,7 +198,7 @@ func TestProductUsecase_DeleteProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -209,7 +209,7 @@ func TestProductUsecase_DeleteProduct(t *testing.T) {
 			},
 			wantErr: true,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -254,7 +254,7 @@ func TestProductUsecase_CreateProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -265,7 +265,7 @@ func TestProductUsecase_CreateProduct(t *testing.T) {
 			},
 			wantErr: true,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -312,7 +312,7 @@ func TestProductUsecase_UpdateProduct(t *testing.T) {
 			},
 			wantErr: false,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},
@@ -324,7 +324,7 @@ func TestProductUsecase_UpdateProduct(t *testing.T) {
 			},
 			wantErr: true,
 			initMock: func() product.ProductUsecase {
-				r := repository2.NewMockRepository(ctrl)
+				r := product2.NewMockRepository(ctrl)
 				return NewProductUseCase(r)
 			},
 		},

@@ -5,17 +5,13 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
-	"log"
 	"os"
 )
 
 const driver = "postgres"
 
 func Postgres() *gorm.DB {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
 	host := os.Getenv("PG_HOST")
 	port := os.Getenv("PG_PORT")
 	dbname := os.Getenv("PG_NAME")
