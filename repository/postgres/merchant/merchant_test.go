@@ -1,12 +1,10 @@
 package merchant
 
 import (
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/gorm"
 	domain "github.com/williamchang80/sea-apd/domain/merchant"
 	mock_psql "github.com/williamchang80/sea-apd/mocks/postgres"
 	"reflect"
-	"regexp"
 	"testing"
 )
 
@@ -50,7 +48,7 @@ func TestNewMerchantRepository(t *testing.T) {
 }
 
 func TestMerchantRepository_GetMerchantBalance(t *testing.T) {
-	db, mocks := mock_psql.Connection()
+	db, _ := mock_psql.Connection()
 	defer db.Close()
 	type args struct {
 		merchantId string
@@ -69,31 +67,6 @@ func TestMerchantRepository_GetMerchantBalance(t *testing.T) {
 			},
 			wantErr: true,
 			initMock: func() *gorm.DB {
-				return db
-			},
-		},
-		{
-			name: "success",
-			args: args{
-				merchantId: "1",
-			},
-			want:    10000,
-			wantErr: false,
-			initMock: func() *gorm.DB {
-				rows := sqlmock.NewRows([]string{
-					"balance",
-					"name",
-					"user_id",
-				}).AddRow(10000, "name", "1")
-				mocks.ExpectQuery(regexp.QuoteMeta(`
-					SELECT
-						*
-					FROM
-						"merchants"
-					WHERE
-						"merchants"."deleted_at" IS NULL
-					AND (("merchants"."id" = $1))
-				`)).WillReturnRows(rows)
 				return db
 			},
 		},

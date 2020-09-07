@@ -26,8 +26,8 @@ var (
 		UserId:     "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
-		TransactionId:     "1",
-		Status: "accepted",
+		TransactionId: "1",
+		Status:        "accepted",
 	}
 	mockTransactionId = "1"
 	mockUserId        = "1"
@@ -169,8 +169,8 @@ func TestTransactionUsecase_UpdateTransactionStatus(t *testing.T) {
 			name: "failed with unmatched status",
 			args: args{
 				request: request.UpdateTransactionRequest{
-					TransactionId:     "1",
-					Status: "Fail",
+					TransactionId: "1",
+					Status:        "Fail",
 				},
 			},
 			wantErr: true,
