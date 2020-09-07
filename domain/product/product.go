@@ -38,13 +38,3 @@ type ProductController interface {
 	UpdateProduct(echo.Context) error
 	DeleteProduct(echo.Context) error
 }
-
-func NewProduct(name string, desc string, price int, image string, stock int) Product {
-	return Product{
-		Name:        name,
-		Description: desc,
-		Price:       price,
-		Image:       image,
-		Stock:       stock,
-	}
-}
