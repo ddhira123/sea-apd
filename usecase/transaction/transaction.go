@@ -17,7 +17,7 @@ type TransactionUsecase struct {
 	merchantUseCase merchant.MerchantUsecase
 }
 
-func ConvertToDomain(t transaction2.TransactionRequest) transaction.Transaction {
+func convertTransactionRequestToDomain(t transaction2.TransactionRequest) transaction.Transaction {
 	return transaction.Transaction{
 		Status:     transactionStatus["ONPROGRESS"],
 		BankNumber: t.BankNumber,
@@ -32,7 +32,7 @@ func NewTransactionUsecase(repo transaction.TransactionRepository, merchantUseCa
 }
 
 func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRequest) error {
-	tran := ConvertToDomain(request)
+	tran := convertTransactionRequestToDomain(request)
 	err := t.tr.CreateTransaction(tran)
 	return err
 }

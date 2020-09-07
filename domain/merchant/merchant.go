@@ -23,6 +23,5 @@ type MerchantUsecase interface {
 	GetMerchantBalance(merchantId string) (int, error)
 }
 type MerchantController interface {
-	UpdateMerchantBalance(echo echo.Context) error
 	GetMerchantBalance(echo echo.Context) error
 }

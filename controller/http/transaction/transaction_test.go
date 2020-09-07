@@ -22,8 +22,8 @@ import (
 
 var (
 	mockUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{
-		TransactionId:     "1",
-		Status: "accepted",
+		TransactionId: "1",
+		Status:        "accepted",
 	}
 	mockCreateTransactionRequest = transaction.TransactionRequest{
 		BankNumber: "123456789",

@@ -85,7 +85,7 @@ func TestConvertToDomain(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ConvertToDomain(tt.args.productRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := convertTransactionRequestToDomain(tt.args.productRequest); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ConvertToDomain() = %v, want %v", got, tt.want)
 			}
 		})

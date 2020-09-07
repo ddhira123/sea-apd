@@ -40,7 +40,7 @@ func (t TransferController) GetTransferHistory(ctx echo.Context) error {
 }
 
 func (t TransferController) CreateTransferHistory(ctx echo.Context) error {
-	var request request.CreateTransferHistorysRequest
+	var request request.CreateTransferHistoryRequest
 	ctx.Bind(&request)
 	if err := t.usecase.CreateTransferHistory(request); err != nil {
 		return ctx.JSON(http.StatusUnprocessableEntity, &base.BaseResponse{

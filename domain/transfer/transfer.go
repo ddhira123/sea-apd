@@ -21,7 +21,7 @@ type TransferController interface {
 
 type TransferUsecase interface {
 	GetTransferHistory(merchantId string) ([]Transfer, error)
-	CreateTransferHistory(request transfer.CreateTransferHistorysRequest) error
+	CreateTransferHistory(request transfer.CreateTransferHistoryRequest) error
 }
 
 type TransferRepository interface {
