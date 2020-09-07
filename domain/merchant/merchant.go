@@ -8,9 +8,9 @@ import (
 
 type Merchant struct {
 	domain.Base
-	Name    string `json:"name"`
-	Balance int    `json:"balance"`
-	UserId  string `json:"user_id"`
+	Name       string `json:"name"`
+	Balance    int    `json:"balance"`
+	UserId     string `json:"user_id"`
 }
 
 type MerchantRepository interface {

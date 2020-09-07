@@ -1,8 +1,8 @@
 package transfer
 
-type CreateTransferHistoryRequest struct {
+type CreateTransferHistorysRequest struct {
 	BankNumber string `json:"bank_number"`
 	BankName   string `json:"bank_name"`
 	Amount     int    `json:"amount"`
-	UserId     string `json:"user_id"`
+	MerchantId string `json:"merchant_id"`
 }

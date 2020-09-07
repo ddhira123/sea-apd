@@ -11,7 +11,7 @@ type Transfer struct {
 	Amount     int    `json:"amount"`
 	BankName   string `json:"bank_name"`
 	BankNumber string `json:"bank_number"`
-	UserId     string `json:"user_id"`
+	MerchantId string `json:"merchant_id"`
 }
 
 type TransferController interface {
@@ -21,7 +21,7 @@ type TransferController interface {
 
 type TransferUsecase interface {
 	GetTransferHistory(merchantId string) ([]Transfer, error)
-	CreateTransferHistory(request transfer.CreateTransferHistoryRequest) error
+	CreateTransferHistory(request transfer.CreateTransferHistorysRequest) error
 }
 
 type TransferRepository interface {
