@@ -51,3 +51,9 @@ func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 		ctrl: repo,
 	}
 }
+func (m MockUsecase) GetProductsByMerchant(merchantId string) ([]product.Product, error) {
+	if len(merchantId) == 0 {
+		return nil, errors.New("Cannot Get Products by Merchant")
+	}
+	return []product.Product{}, nil
+}

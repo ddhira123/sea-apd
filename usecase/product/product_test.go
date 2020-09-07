@@ -319,7 +319,7 @@ func TestProductUsecase_UpdateProduct(t *testing.T) {
 		{
 			name: "failed with empty object request",
 			args: args{
-				request: request.ProductRequest{},
+				request:   request.ProductRequest{},
 				productId: "",
 			},
 			wantErr: true,
@@ -336,6 +336,56 @@ func TestProductUsecase_UpdateProduct(t *testing.T) {
 			if err != nil && !tt.wantErr {
 				t.Errorf("ProductUsecase.UpdateProduct() error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+		})
+	}
+}
+
+func TestProductUsecase_GetProductsByMerchant(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	type args struct {
+		merchantId string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		want     []product.Product
+		wantErr  bool
+		initMock func() product.ProductUsecase
+	}{
+		{
+			name:    "success",
+			want:    []product.Product{},
+			wantErr: false,
+			args: args{
+				merchantId: "1",
+			},
+			initMock: func() product.ProductUsecase {
+				r := product2.NewMockRepository(ctrl)
+				return NewProductUseCase(r)
+			},
+		},
+		{
+			name:    "failed with invalid id",
+			args:    args{merchantId: ""},
+			wantErr: true,
+			initMock: func() product.ProductUsecase {
+				r := product2.NewMockRepository(ctrl)
+				return NewProductUseCase(r)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.initMock()
+			p, err := c.GetProductsByMerchant(tt.args.merchantId)
+			if err != nil && !tt.wantErr {
+				t.Errorf("ProductUsecase.GetProductsByMerchant() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(p, tt.want) {
+				t.Errorf("ProductUsecase.GetProductsByMerchant() = %v, got %v", tt.want, p)
 			}
 		})
 	}

@@ -20,6 +20,7 @@ func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) tr
 	e.POST("/api/transaction", c.CreateTransaction)
 	e.POST("/api/transaction/status", c.UpdateTransactionStatus)
 	e.GET("/api/transaction", c.GetTransactionById)
+	e.GET("/api/transactions/history", c.GetTransactionHistory)
 	return c
 }
 
@@ -65,10 +66,30 @@ func (t *TransactionController) GetTransactionById(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, response.GetTransactionByIdResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
 		Data: domain.TransactionDto{
 			Transaction: *tr,
 		},
+	})
+}
+
+func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
+	id := c.QueryParam("userId")
+	tr, err := t.usecase.GetTransactionHistory(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, response.GetTransactionHistoryResponse{
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: tr,
 	})
 }
