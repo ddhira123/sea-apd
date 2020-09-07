@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.8.0
@@ -12,4 +13,5 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/lib/pq v1.8.0
+	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 )
