@@ -29,7 +29,7 @@ var (
 		UserId:     "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
-		Id:     "1",
+		TransactionId:     "1",
 		Status: "accepted",
 	}
 	mockTransactionId = "1"

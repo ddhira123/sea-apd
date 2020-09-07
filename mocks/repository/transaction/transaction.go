@@ -6,7 +6,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/williamchang80/sea-apd/domain"
 	"github.com/williamchang80/sea-apd/domain/transaction"
-	"github.com/williamchang80/sea-apd/domain/user"
 )
 
 var (
@@ -16,7 +15,6 @@ var (
 		BankNumber: "",
 		BankName:   "",
 		Amount:     0,
-		User:       user.User{},
 		UserId:     "",
 	}
 )

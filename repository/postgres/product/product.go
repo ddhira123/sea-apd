@@ -24,7 +24,7 @@ func (p *ProductRepository) GetProducts() ([]product.Product, error) {
 
 func (p *ProductRepository) GetProductById(productId string) (*product.Product, error) {
 	var product product.Product
-	err := p.db.Find(&product, productId).Limit(1).Error
+	err := p.db.Where("id = ?", productId).Find(&product).Limit(1).Error
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (p *ProductRepository) GetProductById(productId string) (*product.Product, 
 }
 
 func (p *ProductRepository) CreateProduct(product product.Product) error {
-	if err := p.db.Create(&product).Error; err != nil {
+	if err := p.db.Debug().Create(&product).Error; err != nil {
 		return err
 	}
 	return nil
@@ -50,4 +50,13 @@ func (p *ProductRepository) DeleteProduct(productId string) error {
 		return err
 	}
 	return nil
+}
+
+func (p *ProductRepository) GetProductsByMerchant(merchantId string) ([]product.Product, error) {
+	var products []product.Product
+	err := p.db.Where("merchant_id = ?", merchantId).Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }

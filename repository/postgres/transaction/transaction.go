@@ -20,7 +20,7 @@ func (t TransactionRepository) CreateTransaction(tr transaction.Transaction) err
 
 func (t TransactionRepository) UpdateTransactionStatus(status string, id string) (*transaction.Transaction, error) {
 	var tran transaction.Transaction
-	err := t.db.First(&tran, id).Update("status", status).Error
+	err := t.db.Where("id = ?", id).Find(&tran).Update("status", status).Error
 	return &tran, err
 }
 

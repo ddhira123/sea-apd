@@ -277,7 +277,7 @@ func TestProductRepository_DeleteProduct(t *testing.T) {
 					SET "deleted_at"= NOW() 
 					WHERE "products"."deleted_at" 
 					IS NULL AND (("products"."id" = $1))
-				`)).WithArgs( "0").
+				`)).WithArgs("0").
 					WillReturnError(errors.New("No data found"))
 				mocks.ExpectCommit()
 				return db
@@ -354,6 +354,61 @@ func TestProductRepository_UpdateProduct(t *testing.T) {
 			err := pr.UpdateProduct(tt.args.productId, tt.args.product)
 			if err != nil && !tt.wantErr {
 				t.Errorf("ProductRepository.UpdateProduct() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestProductRepository_GetProductsByMerchant(t *testing.T) {
+	db, mocks := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		merchantId string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		want     []domain.Product
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				merchantId: "0",
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				mocks.ExpectQuery(regexp.QuoteMeta(`
+					SELECT *
+					FROM "products"
+					WHERE "products"."deleted_at" 
+						IS NULL AND ((merchant_id = $1))
+				`)).WithArgs(sqlmock.AnyArg()).WillReturnRows(sqlmock.NewRows([]string{
+					"name",
+					"description",
+					"price",
+					"image",
+					"stock",
+				}))
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := ProductRepository{
+				db: tt.initMock(),
+			}
+			prod, err := pr.GetProductsByMerchant(tt.args.merchantId)
+			if err != nil && !tt.wantErr {
+				t.Errorf("ProductRepository.GetProductsByMerchant() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if reflect.DeepEqual(tt.want, prod) {
+				t.Errorf("ProductRepository.GetProductsByMerchant() Find = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

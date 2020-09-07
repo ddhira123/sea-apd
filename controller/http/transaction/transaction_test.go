@@ -22,7 +22,7 @@ import (
 
 var (
 	mockUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{
-		Id:     "1",
+		TransactionId:     "1",
 		Status: "accepted",
 	}
 	mockCreateTransactionRequest = transaction.TransactionRequest{

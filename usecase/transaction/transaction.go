@@ -42,7 +42,7 @@ func (t TransactionUsecase) UpdateTransactionStatus(request transaction2.UpdateT
 	if len(status) == 0 {
 		return errors.New("cannot find status")
 	}
-	tran, err := t.tr.UpdateTransactionStatus(status, request.Id)
+	tran, err := t.tr.UpdateTransactionStatus(status, request.TransactionId)
 	if err != nil{
 		return err
 	}

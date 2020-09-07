@@ -8,7 +8,7 @@ import (
 
 type Product struct {
 	domain.Base
-	Name        string `json:"id"`
+	Name        string `json:"name"`
 	Description string `json:"description"`
 	Price       int    `json:"price"`
 	Image       string `json:"image"`
@@ -22,7 +22,7 @@ type ProductUsecase interface {
 	CreateProduct(productRequest product.ProductRequest) error
 	UpdateProduct(productId string, productRequest product.ProductRequest) error
 	DeleteProduct(productId string) error
-	//GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductsByMerchant(merchantId string) ([]Product, error)
 }
 
 type ProductRepository interface {
@@ -31,7 +31,7 @@ type ProductRepository interface {
 	CreateProduct(Product) error
 	UpdateProduct(productId string, product Product) error
 	DeleteProduct(productId string) error
-	//GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductsByMerchant(merchantId string) ([]Product, error)
 }
 
 type ProductController interface {
@@ -40,5 +40,5 @@ type ProductController interface {
 	CreateProduct(echo.Context) error
 	UpdateProduct(echo.Context) error
 	DeleteProduct(echo.Context) error
-	//GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductsByMerchant(echo.Context) error
 }
