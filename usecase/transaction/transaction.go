@@ -5,6 +5,7 @@ import (
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
+	merchant2 "github.com/williamchang80/sea-apd/dto/request/merchant"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
 	"strings"
 )
@@ -39,9 +40,18 @@ func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRe
 func (t TransactionUsecase) UpdateTransactionStatus(request transaction2.UpdateTransactionRequest) error {
 	status := transactionStatus[strings.ToUpper(request.Status)]
 	if len(status) == 0 {
-		return errors.New("Cannot find status")
+		return errors.New("cannot find status")
 	}
-	err := t.tr.UpdateTransactionStatus(status, request.Id)
+	tran, err := t.tr.UpdateTransactionStatus(status, request.Id)
+	if err != nil{
+		return err
+	}
+	if status == transactionStatus["ACCEPTED"] {
+		t.merchantUseCase.UpdateMerchantBalance(merchant2.UpdateMerchantBalanceRequest{
+			Amount: tran.Amount,
+			MerchantId: tran.UserId,
+		})
+	}
 	return err
 }
 

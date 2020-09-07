@@ -17,6 +17,10 @@ type MerchantRoute struct {
 
 func NewMerchantRoute(e *echo.Echo) MerchantRoute {
 	db := db.Postgres()
+	if db != nil {
+		d := db.AutoMigrate(&domain.Merchant{})
+		d.AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+	}
 	repo := merchant.NewMerchantRepository(db)
 	usecase := use_case.NewMerchantUsecase(repo)
 	c := controller.NewMerchantController(e, usecase)

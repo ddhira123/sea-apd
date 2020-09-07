@@ -17,6 +17,10 @@ type ProductRoute struct {
 
 func NewProductRoutes(e *echo.Echo) ProductRoute {
 	db := db.Postgres()
+	if db != nil {
+		d := db.AutoMigrate(&domain.Product{})
+		d.AddForeignKey("merchant_id", "merchants(id)", "CASCADE", "CASCADE")
+	}
 	repo := product2.NewProductRepository(db)
 	usecase := use_case.NewProductUseCase(repo)
 	controller := product.NewProductController(e, usecase)

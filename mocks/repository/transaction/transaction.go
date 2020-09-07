@@ -47,11 +47,11 @@ func (m MockRepository) GetTransactionById(id string) (*transaction.Transaction,
 	return &emptyTransaction, nil
 }
 
-func (m MockRepository) UpdateTransactionStatus(status string, id string) error {
+func (m MockRepository) UpdateTransactionStatus(status string, id string) (*transaction.Transaction, error) {
 	if len(status) == 0 || len(id) == 0 {
-		return errors.New("Cannot Update with empty object")
+		return nil, errors.New("Cannot Update with empty object")
 	}
-	return nil
+	return &emptyTransaction, nil
 }
 
 func (m MockRepository) GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]transaction.Transaction, error) {

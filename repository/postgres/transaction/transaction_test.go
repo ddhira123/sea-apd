@@ -214,7 +214,7 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 			pr := TransactionRepository{
 				db: tt.initMock(),
 			}
-			err := pr.UpdateTransactionStatus(tt.args.productId, tt.args.status)
+			_, err := pr.UpdateTransactionStatus(tt.args.productId, tt.args.status)
 			if err != nil && !tt.wantErr {
 				t.Errorf("TransactionRepository.UpdateTransactionStatus() error = %v, wantErr %v", err, tt.wantErr)
 				return

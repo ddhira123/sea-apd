@@ -34,6 +34,6 @@ type TransactionController interface {
 type TransactionRepository interface {
 	CreateTransaction(Transaction) error
 	GetTransactionById(string) (*Transaction, error)
-	UpdateTransactionStatus(status string, id string) error
+	UpdateTransactionStatus(status string, id string) (*Transaction, error)
 	GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]Transaction, error)
 }

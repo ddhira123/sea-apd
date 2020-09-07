@@ -10,9 +10,6 @@ type MerchantRepository struct {
 }
 
 func NewMerchantRepository(db *gorm.DB) merchant.MerchantRepository {
-	if db != nil {
-		db.AutoMigrate(&merchant.Merchant{})
-	}
 	return &MerchantRepository{db: db}
 }
 
