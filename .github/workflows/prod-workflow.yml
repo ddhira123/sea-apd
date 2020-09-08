@@ -37,10 +37,6 @@ jobs:
         run: docker build . --file Dockerfile --tag williamchang80/sea-apd:1.0
       - name: Push the tagged Docker image
         run: docker push williamchang80/sea-apd:1.0
-      - name: Build the latest Docker image
-        run: docker build . --file Dockerfile --tag williamchang80/sea-apd:latest
-      - name: Push the latest Docker image
-        run: docker push williamchang80/sea-apd:latest
   
   deploy_to_azure:
     name: Deploy To Azure
