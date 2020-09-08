@@ -62,7 +62,7 @@ func (p *ProductController) CreateProduct(c echo.Context) error {
 }
 
 func (p *ProductController) GetProductById(context echo.Context) error {
-	id := context.QueryParam("productId")
+	id := context.QueryParam("product_id")
 	product, err := p.usecase.GetProductById(id)
 	if err != nil {
 		return context.JSON(http.StatusNotFound, &base.BaseResponse{

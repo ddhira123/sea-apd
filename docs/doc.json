@@ -1,0 +1,406 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API specification for APD Store application",
+    "title": "APD Store",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0"
+  },
+  "host": "137.116.136.106",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "product",
+      "description": "Product that sold by merchant and can be bought by customers"
+    },
+    {
+      "name": "user",
+      "description": "User in this application"
+    },
+    {
+      "name": "merchant",
+      "description": "Merchant that sold item to users"
+    },
+    {
+      "name": "transaction",
+      "description": "Transaction that indicate customer buying status"
+    },
+    {
+      "name": "transfer",
+      "description": "Transfer that done by merchant from or to their bank account"
+    }
+  ],
+  "paths": {
+    "/product": {
+      "post": {
+        "tags": [
+          "product"
+        ],
+        "description": "Creating product that can be sold for user",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Creating product for merchant",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Name for product",
+            "name": "name",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Image for product",
+            "name": "image",
+            "in": "formData",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "description": "Price for product",
+            "name": "price",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Description for product",
+            "name": "description",
+            "in": "formData",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "description": "Stock that available for this product",
+            "name": "stock",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Merchant id that selling this product",
+            "name": "merchantId",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/createdResponse"
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get product by id",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getProductByIdResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Update product data",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Id for product",
+            "name": "product_id",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Name for product",
+            "name": "name",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Image for product",
+            "name": "image",
+            "in": "formData",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "description": "Price for product",
+            "name": "price",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Description for product",
+            "name": "description",
+            "in": "formData",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "description": "Stock that available for this product",
+            "name": "stock",
+            "in": "formData",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Merchant id that selling this product",
+            "name": "merchantId",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/successResponse"
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Delete product by id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "type": "string",
+            "name": "productId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/successResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "Get all products",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getProductsResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "createdResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 201
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        }
+      }
+    },
+    "notFoundResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 404
+        },
+        "message": {
+          "type": "string",
+          "example": "not found"
+        }
+      }
+    },
+    "successResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        }
+      }
+    },
+    "getProductsResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": object,
+          "properties": {
+            "products": {
+              "type": array,
+              "items": {
+                "$ref": '#/definitions/model.product'
+              }
+            }
+          }
+        }
+      }
+    },
+    "getProductByIdResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "$ref": '#/definitions/model.product'
+        }
+      }
+    },
+    "model.product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "id for product in uuid format",
+          "example": "867ce2ce-77ec-44da-9404-d328db73e729"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name for product",
+          "example": "T shirt"
+        },
+        "image": {
+          "type": "string",
+          "description": "File path for product image",
+          "example": "http://google.com"
+        },
+        "price": {
+          "type": "integer",
+          "description": "Price for product",
+          "example": "10000"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description for product",
+          "example": "This is a comfortable shirt"
+        },
+        "stock": {
+          "type": "integer",
+          "description": "Stock that available for this product",
+          "example": "3"
+        },
+        "merchant_id": {
+          "type": "string",
+          "description": "Merchant id that selling this product",
+          "example": "2538dae4-3bed-47f2-898c-e0b80bb2816e"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp that indicate when this product is created",
+          "example": "2020-09-08T17:48:56+0000"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp that indicate when this product is updated",
+          "example": "2020-09-08T17:48:56+0000"
+        },
+        "deleted_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp that indicate when this product is deleted",
+          "example": "2020-09-08T17:48:56+0000"
+        }
+      }
+    }
+  }
+}
