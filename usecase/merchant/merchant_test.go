@@ -1,12 +1,13 @@
 package merchant
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	request "github.com/williamchang80/sea-apd/dto/request/merchant"
 	merchant2 "github.com/williamchang80/sea-apd/mocks/repository/merchant"
-	"reflect"
-	"testing"
 )
 
 func TestNewMerchantUsecase(t *testing.T) {
