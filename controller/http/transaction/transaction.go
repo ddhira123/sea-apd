@@ -18,7 +18,7 @@ type TransactionController struct {
 func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) transaction.TransactionController {
 	c := &TransactionController{usecase: t}
 	e.POST("/api/transaction", c.CreateTransaction)
-	e.POST("/api/transaction/status", c.UpdateTransactionStatus)
+	e.PUT("/api/transaction/status", c.UpdateTransactionStatus)
 	e.GET("/api/transaction", c.GetTransactionById)
 	e.GET("/api/transactions/history", c.GetTransactionHistory)
 	return c
@@ -90,6 +90,8 @@ func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
 			Code:    http.StatusOK,
 			Message: message.SUCCESS,
 		},
-		Data: tr,
+		Data: domain.TransactionListDto{
+			Transactions: tr,
+		},
 	})
 }

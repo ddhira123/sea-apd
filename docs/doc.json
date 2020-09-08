@@ -262,9 +262,178 @@
           }
         }
       }
+    },
+    "/transaction": {
+      "post": {
+        "tags": [
+          "transaction"
+        ],
+        "summary": "Create a transaction",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": '#/definitions/createTransactionRequest'
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/successResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "transaction"
+        ],
+        "summary": "Get transaction by id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "type": "string",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getTransactionByIdResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
+    "/transaction/status": {
+      "put": {
+        "tags": [
+          "transaction"
+        ],
+        "summary": "Update transaction status",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": '#/definitions/updateTransactionRequest'
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/successResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
+    "/transactions/history": {
+      "get": {
+        "tags": [
+          "transaction"
+        ],
+        "summary": "Get transaction history by user id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getTransactionHistoryResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
+    "createTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "bank_number": {
+          "type": "string",
+          "example": "123"
+        },
+        "bank_name": {
+          "type": "string",
+          "example": "Bank World"
+        },
+        "amount": {
+          "type": "integer",
+          "example": 10000
+        },
+        "user_id": {
+          "type": "string",
+          "example": "3efa0889-c74b-4498-9134-5733bfdbd8a7"
+        }
+      }
+    },
+    "updateTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "transaction_id": {
+          "type": "string",
+          "example": "3efa0889-c74b-4498-9134-5733bfdbd8a7"
+        },
+        "status": {
+          "type": "string",
+          "example": "declined",
+          "enum": [
+            "accepted",
+            "onprogress",
+            "declined"
+          ]
+        }
+      }
+    },
     "createdResponse": {
       "type": "object",
       "properties": {
@@ -344,6 +513,46 @@
         }
       }
     },
+    "getTransactionByIdResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "$ref": '#/definitions/model.transaction'
+        }
+      }
+    },
+    "getTransactionHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": object,
+          "properties": {
+            "transactions": {
+              "type": array,
+              "items": {
+                "$ref": '#/definitions/model.transaction'
+              }
+            }
+          }
+        }
+      }
+    },
     "model.product": {
       "type": "object",
       "properties": {
@@ -399,6 +608,46 @@
           "format": "date-time",
           "description": "Timestamp that indicate when this product is deleted",
           "example": "2020-09-08T17:48:56+0000"
+        }
+      }
+    },
+    "model.transaction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "id for transaction in uuid format",
+          "example": "867ce2ce-77ec-44da-9404-d328db73e729"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "accepted",
+            "onprogress",
+            "declined"
+          ],
+          "description": "status for the trasaction",
+          "example": "accepted"
+        },
+        "bank_number": {
+          "type": "string",
+          "description": "Bank number that used for transaction",
+          "example": "123456789"
+        },
+        "bank_name": {
+          "type": "string",
+          "description": "Bank name that used for transaction",
+          "example": "Bank World"
+        },
+        "amount": {
+          "type": "integer",
+          "description": "Amount of money for this transaction",
+          "example": 20000
+        },
+        "user_id": {
+          "type": "string",
+          "description": "Buyer that doing the transaction",
+          "example": "867ce2ce-77ec-44da-9404-d328db73e729"
         }
       }
     }
