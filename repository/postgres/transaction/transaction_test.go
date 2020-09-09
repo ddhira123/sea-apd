@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/jinzhu/gorm"
-	"github.com/williamchang80/sea-apd/common/constants/payment_status"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	domain "github.com/williamchang80/sea-apd/domain/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
 	mock_psql "github.com/williamchang80/sea-apd/mocks/postgres"
@@ -20,7 +20,7 @@ var (
 		Amount:     10000,
 		UserId:     "1",
 	}
-	transactionStatus     = payment_status.GetPaymentStatus()
+	transactionStatus     = transaction_status.GetTransactionStatus()
 	mockTransactionEntity = domain.Transaction{
 		Status:     transactionStatus["ONPROGRESS"],
 		BankNumber: "123456789",
@@ -29,7 +29,7 @@ var (
 		UserId:     "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
-		Id:     "1",
+		TransactionId:     "1",
 		Status: "accepted",
 	}
 	mockTransactionId = "1"
@@ -214,9 +214,58 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 			pr := TransactionRepository{
 				db: tt.initMock(),
 			}
-			err := pr.UpdateTransactionStatus(tt.args.productId, tt.args.status)
+			_, err := pr.UpdateTransactionStatus(tt.args.productId, tt.args.status)
 			if err != nil && !tt.wantErr {
 				t.Errorf("TransactionRepository.UpdateTransactionStatus() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
+	db, mocks := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		productId      string
+		requiredStatus []string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				productId: "0",
+				requiredStatus: []string{
+					transactionStatus["failed"],
+				},
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				mocks.ExpectExec(regexp.QuoteMeta(`
+					UPDATE "transactions" 
+					SET "status" = $1
+					WHERE "transactions"."deleted_at" 
+						IS NULL AND ((id = 0))
+				`)).WithArgs(transactionStatus["Accepted"]).
+					WillReturnError(errors.New("No data found"))
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := TransactionRepository{
+				db: tt.initMock(),
+			}
+			_, err := pr.GetTransactionByRequiredStatus(tt.args.requiredStatus, tt.args.productId)
+			if err != nil && !tt.wantErr {
+				t.Errorf("TransactionRepository.GetTransactionByRequiredStatus() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

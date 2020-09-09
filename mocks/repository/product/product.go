@@ -57,3 +57,10 @@ func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 	}
 	return mock
 }
+
+func (m MockRepository) GetProductsByMerchant(merchantId string) ([]domain.Product, error) {
+	if merchantId != "" {
+		return []domain.Product{}, nil
+	}
+	return nil, errors.New("Cannot Delete Product")
+}

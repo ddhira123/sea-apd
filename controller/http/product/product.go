@@ -24,6 +24,7 @@ func NewProductController(e *echo.Echo, p product.ProductUsecase) product.Produc
 	e.GET("/api/product", c.GetProductById)
 	e.PUT("/api/product", c.UpdateProduct)
 	e.DELETE("/api/product", c.DeleteProduct)
+	e.GET("/api/merchant/products", c.GetProductsByMerchant)
 	return c
 }
 
@@ -37,9 +38,11 @@ func (p *ProductController) GetProducts(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &response.GetProductsResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
-		Data:    domain.ProductListDto{Products: products},
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: domain.ProductListDto{Products: products},
 	})
 }
 
@@ -68,10 +71,12 @@ func (p *ProductController) GetProductById(context echo.Context) error {
 		})
 	}
 	return context.JSON(http.StatusOK, &response.GetProductByIdResponse{
-		Code:    http.StatusOK,
-		Message: message.SUCCESS,
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
 		Data: domain.ProductDto{
-			Product: *product,
+			Product: product,
 		},
 	})
 }
@@ -105,5 +110,24 @@ func (p *ProductController) DeleteProduct(context echo.Context) error {
 	return context.JSON(http.StatusOK, &base.BaseResponse{
 		Code:    http.StatusOK,
 		Message: message.SUCCESS,
+	})
+}
+
+func (p *ProductController) GetProductsByMerchant(c echo.Context) error {
+	merchantId := c.QueryParam("merchantId")
+	products, err := p.usecase.GetProductsByMerchant(merchantId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+
+	return c.JSON(http.StatusOK, &response.GetProductsResponse{
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: domain.ProductListDto{Products: products},
 	})
 }
