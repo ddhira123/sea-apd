@@ -2,8 +2,8 @@ package user
 
 import (
 	"errors"
+	auth2 "github.com/williamchang80/sea-apd/common/auth"
 	"github.com/williamchang80/sea-apd/common/constants/role"
-	"github.com/williamchang80/sea-apd/common/security"
 	"github.com/williamchang80/sea-apd/domain/user"
 	"github.com/williamchang80/sea-apd/dto/request/auth"
 )
@@ -16,12 +16,12 @@ func NewUserUsecase(repo user.UserRepository) user.UserUsecase {
 	return UserUsecase{repo: repo}
 }
 
-func convertRegisterRequestToUserDomain(request auth.RegisterUserRequest) user.User {
+func convertRegisterRequestToUserDomain(request auth.RegisterUserRequest ) user.User {
 	userRoles := role.GetUserRoles()
 	return user.User{
 		Name:     request.Name,
 		Email:    request.Email,
-		Password: security.HashPassword(request.Password),
+		Password: auth2.HashPassword(request.Password),
 		Role:     userRoles["CUSTOMER"],
 	}
 }
