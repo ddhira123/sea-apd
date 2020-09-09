@@ -16,7 +16,7 @@ type AuthController struct {
 
 func NewAuthController(echo *echo.Echo, a auth.AuthUsecase) auth.AuthController {
 	c := AuthController{usecase: a}
-	echo.GET("api/auth/login", c.Login)
+	echo.POST("api/auth/login", c.Login)
 	return c
 }
 

@@ -9,5 +9,5 @@ type RegisterUserRequest struct {
 	Email                string `json:"email"`
 	Password             string `json:"password"`
 	Name                 string `json:"name"`
-	ConfirmationPassword string `json:"confirmation_password"`
+	PasswordConfirmation string `json:"password_confirmation"`
 }

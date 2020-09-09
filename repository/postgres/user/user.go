@@ -19,3 +19,12 @@ func (u UserRepository) CreateUser(user user.User) error {
 	}
 	return nil
 }
+
+func (u UserRepository) GetUserByEmail(email string) (*user.User, error) {
+	var user user.User
+	err := u.db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

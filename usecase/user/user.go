@@ -27,7 +27,7 @@ func convertRegisterRequestToUserDomain(request auth.RegisterUserRequest) user.U
 }
 
 func (u UserUsecase) CreateUser(request auth.RegisterUserRequest) error {
-	if request.Password != request.ConfirmationPassword {
+	if request.Password != request.PasswordConfirmation {
 		return errors.New("password and confirmation password must be same")
 	}
 	user := convertRegisterRequestToUserDomain(request)

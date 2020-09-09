@@ -6,4 +6,5 @@ const (
 	BAD_REQUEST = "bad request"
 	UNPROCESSABLE_ENTITY = "validation error"
 	UNAUTHENTICED = "unauthenticated"
+	UNAUTHORIZED = "unauthorized"
 )

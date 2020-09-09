@@ -17,7 +17,7 @@ func NewUserController(e *echo.Echo, uc user.UserUsecase) user.UserController {
 	c := &UserController{
 		usecase: uc,
 	}
-	e.POST("api/user", c.CreateUser)
+	e.POST("api/auth/register", c.CreateUser)
 	return c
 }
 

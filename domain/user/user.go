@@ -16,6 +16,7 @@ type User struct {
 
 type UserRepository interface {
 	CreateUser(User) error
+	GetUserByEmail(email string) (*User, error)
 }
 
 type UserUsecase interface {

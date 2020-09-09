@@ -2,6 +2,9 @@ package routes
 
 import (
 	"github.com/labstack/echo"
+	middleware2 "github.com/labstack/echo/middleware"
+	"os"
+	"strings"
 )
 
 type Routes struct {
@@ -17,4 +20,20 @@ func InitMainRoutes(echo *echo.Echo) {
 	NewTransactionRoute(echo)
 	NewTransferRoute(echo)
 	NewAuthRoute(echo)
+
+	InitMiddleware(echo)
+}
+
+func InitMiddleware(e *echo.Echo) {
+	key := os.Getenv("SECRET_AUTH_KEY")
+	e.Use(middleware2.JWTWithConfig(middleware2.JWTConfig{
+		SigningKey:  []byte(key),
+		TokenLookup: "header:Authorization",
+		Skipper: func(context echo.Context) bool {
+			if strings.HasPrefix(context.Request().URL.Path, "/api/auth") {
+				return true
+			}
+			return false
+		},
+	}))
 }
