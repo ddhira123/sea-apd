@@ -12,6 +12,7 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0
 	github.com/lib/pq v1.8.0
+	github.com/satori/go.uuid v1.2.0
 	golang.org/x/tools v0.0.0-20200904140424-93eecc3576be // indirect
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 )

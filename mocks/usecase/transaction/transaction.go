@@ -40,3 +40,10 @@ func (m MockUsecase) GetTransactionById(id string) (*domain.Transaction, error) 
 	}
 	return &domain.Transaction{}, nil
 }
+
+func (m MockUsecase) GetTransactionHistory(userId string) ([]domain.Transaction, error) {
+	if len(userId) != 0 {
+		return []domain.Transaction{}, nil
+	}
+	return nil, errors.New("User Id cannot be empty")
+}

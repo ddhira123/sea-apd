@@ -37,10 +37,6 @@ jobs:
         run: docker build . --file Dockerfile --tag williamchang80/sea-apd:1.0
       - name: Push the tagged Docker image
         run: docker push williamchang80/sea-apd:1.0
-      - name: Build the latest Docker image
-        run: docker build . --file Dockerfile --tag williamchang80/sea-apd:latest
-      - name: Push the latest Docker image
-        run: docker push williamchang80/sea-apd:latest
   
   deploy_to_azure:
     name: Deploy To Azure
@@ -65,7 +61,7 @@ jobs:
           username: ${{ secrets.AZURE_USER }}
           password: ${{ secrets.AZURE_PASSWORD }}
           port: 22
-          script: docker pull williamchang80/sea-apd && docker pull williamchang80/nginx-apd:1.0
+          script: docker pull williamchang80/sea-apd && docker pull williamchang80/nginx-apd
       - name: Run docker compose
         uses: appleboy/ssh-action@master
         with:

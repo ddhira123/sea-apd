@@ -8,6 +8,6 @@ type TransactionRequest struct {
 }
 
 type UpdateTransactionRequest struct {
-	Id     string
-	Status string
+	TransactionId string `json:"transaction_id"`
+	Status        string `json:"status"`
 }

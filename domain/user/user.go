@@ -1,7 +1,6 @@
 package user
 
 import (
-  "time"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"

@@ -7,10 +7,7 @@ import (
 
 func Connection() (*gorm.DB, sqlmock.Sqlmock) {
 	const driver = "postgres"
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		panic(err)
-	}
+	db, mock, _ := sqlmock.New()
 	g,_ := gorm.Open(driver, db)
 	return g, mock
 }
