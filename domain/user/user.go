@@ -5,12 +5,13 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/common/security"
+	"github.com/williamchang80/sea-apd/domain"
 	request "github.com/williamchang80/sea-apd/dto/request/user"
 )
 
 // User ...
 type User struct {
-	gorm.Model
+	domain.Base
 	Name     string `gorm:"size:50;not null;" json:"name"`
 	Email    string `gorm:"unique;size:100;not null;" json:"email"`
 	Password string `gorm:"not null;" json:"password"`

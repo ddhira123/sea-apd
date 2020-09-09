@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+
 	"github.com/jinzhu/gorm"
 	"github.com/williamchang80/sea-apd/domain/user"
 	request "github.com/williamchang80/sea-apd/dto/request/user"
@@ -15,16 +16,16 @@ type UserUsecase struct {
 // ConvertToDomain ...
 func ConvertToDomain(u request.UserRequest) user.User {
 	return user.User{
-		Name: u.Name,
-		Email: u.Email,
+		Name:     u.Name,
+		Email:    u.Email,
 		Password: u.Password,
-		Phone: u.Phone,
-		Role: u.Role,
+		Phone:    u.Phone,
+		Role:     u.Role,
 	}
 }
 
 // NewUserUseCase is an usecase function for New user
-func NewUserUseCase(u user.UserRepository) user.UserUsecase {
+func NewUserUsecase(u user.UserRepository) user.UserUsecase {
 	return &UserUsecase{
 		ur: u,
 	}
@@ -39,7 +40,7 @@ func (s *UserUsecase) RegisterUser(user request.UserRequest) error {
 	if u != nil {
 		return errors.New("duplicate")
 	}
-	
+
 	a := ConvertToDomain(user)
 	err = s.ur.CreateUser(a)
 	if err != nil {
