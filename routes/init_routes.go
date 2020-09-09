@@ -16,4 +16,5 @@ func InitMainRoutes(echo *echo.Echo) {
 	NewProductRoutes(echo)
 	NewTransactionRoute(echo)
 	NewTransferRoute(echo)
+	NewAuthRoute(echo)
 }

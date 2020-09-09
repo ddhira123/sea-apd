@@ -32,7 +32,7 @@ func (p *ProductRepository) GetProductById(productId string) (*product.Product, 
 }
 
 func (p *ProductRepository) CreateProduct(product product.Product) error {
-	if err := p.db.Debug().Create(&product).Error; err != nil {
+	if err := p.db.Create(&product).Error; err != nil {
 		return err
 	}
 	return nil
