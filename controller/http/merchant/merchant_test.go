@@ -1,17 +1,18 @@
 package merchant
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"reflect"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo"
 	domain "github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/mocks/repository/merchant"
 	merchant_mock_usecase "github.com/williamchang80/sea-apd/mocks/usecase/merchant"
 	merchant2 "github.com/williamchang80/sea-apd/usecase/merchant"
-	"net/http"
-	"net/http/httptest"
-	"net/url"
-	"reflect"
-	"testing"
 )
 
 var (
