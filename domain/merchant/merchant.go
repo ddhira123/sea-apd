@@ -8,20 +8,35 @@ import (
 
 type Merchant struct {
 	domain.Base
-	Name       string `json:"name"`
-	Balance    int    `json:"balance"`
-	UserId     string `json:"user_id"`
+	Name     string `json:"name"`
+	Balance  int    `json:"balance"`
+	UserId   string `json:"user_id"`
+	Brand    string `json:"brand"`
+	Address  string `json:"address"`
+	Approval string `json:"approval"`
 }
 
 type MerchantRepository interface {
 	UpdateMerchantBalance(amount int, merchantId string) error
 	GetMerchantBalance(merchantId string) (int, error)
+	RegisterMerchant(merchant Merchant) error
+	GetMerchants() ([]Merchant, error)
+	GetMerchantById(merchantId string) (*Merchant, error)
+	GetMerchantsByUser(userId string) ([]Merchant, error)
 }
 
 type MerchantUsecase interface {
 	UpdateMerchantBalance(request merchant.UpdateMerchantBalanceRequest) error
 	GetMerchantBalance(merchantId string) (int, error)
+	RegisterMerchant(request merchant.MerchantRequest) error
+	GetMerchants() ([]Merchant, error)
+	GetMerchantById(merchantId string) (*Merchant, error)
+	GetMerchantsByUser(userId string) ([]Merchant, error)
 }
 type MerchantController interface {
 	GetMerchantBalance(echo echo.Context) error
+	GetMerchants(echo echo.Context) error
+	GetMerchantById(echo echo.Context) error
+	RegisterMerchant(echo echo.Context) error
+	GetMerchantsByUser(echo echo.Context) error
 }
