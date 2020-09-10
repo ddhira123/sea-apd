@@ -15,7 +15,8 @@ var (
 		BankNumber: "",
 		BankName:   "",
 		Amount:     0,
-		UserId:     "",
+		CustomerId: "",
+		MerchantId: "",
 	}
 )
 
@@ -56,4 +57,8 @@ func (m MockRepository) GetTransactionByRequiredStatus(requiredStatus []string, 
 		return nil, errors.New("Cannot Get Required status with empty user id")
 	}
 	return []transaction.Transaction{}, nil
+}
+
+func (m MockRepository) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
+	panic("implement me")
 }

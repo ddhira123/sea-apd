@@ -3,6 +3,7 @@ package transaction
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/williamchang80/sea-apd/domain/transaction"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 )
 
 type TransactionRepository struct {
@@ -35,7 +36,20 @@ func (t TransactionRepository) GetTransactionById(id string) (*transaction.Trans
 
 func (t TransactionRepository) GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]transaction.Transaction, error) {
 	var transactions []transaction.Transaction
-	err := t.db.Where("status IN (?)", requiredStatus).Where("user_id = ?", userId).Find(&transactions).Error
+	err := t.db.Where("status IN (?)", requiredStatus).Where(
+		"customer_id = ?", userId).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+
+
+func (t TransactionRepository) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
+	var transactions []transaction.Transaction
+	onRequestMerchantStatus := transaction_status.ToString(transaction_status.ACCEPTED)
+	err := t.db.Where("status = ?", onRequestMerchantStatus).
+		Where("merchants_id = ?", merchantId).Find(&transactions).Error
 	if err != nil {
 		return nil, err
 	}

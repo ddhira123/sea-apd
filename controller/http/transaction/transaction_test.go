@@ -30,7 +30,8 @@ var (
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		MerchantId: "1",
+		CustomerId: "1",
 	}
 	mockId = "1"
 )

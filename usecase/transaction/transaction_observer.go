@@ -22,7 +22,7 @@ func (u *UpdateMerchantBalanceObserver) Update(transaction transaction.Transacti
 	if transaction_status.ParseToEnum(transaction.Status) == transaction_status.WAITING_DELIVERY {
 		err = t.UpdateMerchantBalance(merchant2.UpdateMerchantBalanceRequest{
 			Amount:     transaction.Amount,
-			MerchantId: transaction.UserId,
+			MerchantId: transaction.MerchantId,
 		})
 	}
 	return err

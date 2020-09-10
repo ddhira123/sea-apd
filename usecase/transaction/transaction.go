@@ -32,7 +32,8 @@ func convertTransactionRequestToDomain(t transaction2.TransactionRequest) transa
 		BankNumber: t.BankNumber,
 		BankName:   t.BankName,
 		Amount:     t.Amount,
-		UserId:     t.UserId,
+		CustomerId: t.CustomerId,
+		MerchantId: t.MerchantId,
 	}
 }
 
@@ -76,6 +77,14 @@ func (t TransactionUsecase) GetTransactionHistory(userId string) ([]transaction.
 Transaction, error) {
 	requiredStatusForTransactionHistory := transaction_status.GetStatusListForTransactionHistory()
 	tr, err := t.tr.GetTransactionByRequiredStatus(requiredStatusForTransactionHistory, userId)
+	if err != nil {
+		return nil, err
+	}
+	return tr, nil
+}
+
+func (t TransactionUsecase) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
+	tr, err := t.tr.GetMerchantRequestItem(merchantId)
 	if err != nil {
 		return nil, err
 	}

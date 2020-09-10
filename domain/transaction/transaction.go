@@ -13,8 +13,9 @@ type Transaction struct {
 	BankNumber string            `json:"bank_number"`
 	BankName   string            `json:"bank_name"`
 	Amount     int               `json:"amount"`
-	UserId     string            `json:"user_id"`
+	CustomerId string            `json:"customer_id"`
 	Status     string            `json:"status"`
+	MerchantId string            `json:"merchant_id"`
 	Products   []product.Product `json:"products"`
 }
 
@@ -32,6 +33,7 @@ type TransactionUsecase interface {
 	GetTransactionById(id string) (*Transaction, error)
 	UpdateTransactionStatus(transaction.UpdateTransactionRequest) error
 	GetTransactionHistory(userId string) ([]Transaction, error)
+	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
 }
 
 type TransactionController interface {
@@ -39,6 +41,7 @@ type TransactionController interface {
 	GetTransactionById(echo.Context) error
 	UpdateTransactionStatus(echo.Context) error
 	GetTransactionHistory(echo.Context) error
+	GetMerchantRequestItem(echo.Context) error
 }
 
 type TransactionRepository interface {
@@ -46,4 +49,5 @@ type TransactionRepository interface {
 	GetTransactionById(string) (*Transaction, error)
 	UpdateTransactionStatus(status string, id string) (*Transaction, error)
 	GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]Transaction, error)
+	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
 }

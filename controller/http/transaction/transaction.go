@@ -93,3 +93,21 @@ func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
 		Data: tr,
 	})
 }
+
+func (t *TransactionController) GetMerchantRequestItem(c echo.Context) error {
+	id := c.QueryParam("merchantId")
+	tr, err := t.usecase.GetMerchantRequestItem(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, response.GetTransactionHistoryResponse{
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: tr,
+	})
+}

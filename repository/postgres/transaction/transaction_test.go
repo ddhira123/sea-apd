@@ -18,18 +18,19 @@ var (
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId:     "1",
 	}
 	mockTransactionEntity = domain.Transaction{
 		Status:     transaction_status.ToString(transaction_status.WAITING_PAYMENT),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
+		MerchantId: "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
-		TransactionId:     "1",
-		Status: transaction_status.WAITING_PAYMENT,
+		TransactionId: "1",
+		Status:        transaction_status.WAITING_PAYMENT,
 	}
 	mockTransactionId = "1"
 )
@@ -192,7 +193,7 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 			name: "fail with invalid id",
 			args: args{
 				productId: "0",
-				status:   transaction_status.ToString(transaction_status.ACCEPTED),
+				status:    transaction_status.ToString(transaction_status.ACCEPTED),
 			},
 			wantErr: true,
 			initMock: func() *gorm.DB {

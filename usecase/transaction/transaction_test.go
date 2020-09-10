@@ -17,14 +17,16 @@ var (
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
+		MerchantId: "1",
 	}
 	mockTransactionEntity = transaction.Transaction{
 		Status:     transaction_status.ToString(transaction_status.WAITING_CONFIRMATION),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
+		MerchantId: "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
 		TransactionId: "1",
@@ -87,7 +89,7 @@ func TestConvertToDomain(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := convertTransactionRequestToDomain(tt.args.productRequest); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToDomain() = %v, want %v", got, tt.want)
+				t.Errorf("ConvertToDomain() = %#v, want %#v", got, tt.want)
 			}
 		})
 	}
