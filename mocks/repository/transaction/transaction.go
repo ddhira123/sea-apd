@@ -2,10 +2,10 @@ package transaction
 
 import (
 	"errors"
-	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/williamchang80/sea-apd/domain"
 	"github.com/williamchang80/sea-apd/domain/transaction"
+	"reflect"
 )
 
 var (
@@ -31,8 +31,7 @@ func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 }
 
 func (m MockRepository) CreateTransaction(transaction transaction.Transaction) error {
-	fmt.Printf("%#v", transaction)
-	if transaction == emptyTransaction {
+	if reflect.DeepEqual(transaction, emptyTransaction) {
 		return errors.New("Transaction cannot be empty")
 	}
 	return nil

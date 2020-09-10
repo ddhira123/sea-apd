@@ -58,7 +58,7 @@ UpdateTransactionRequest) error {
 	if err != nil {
 		return err
 	}
-	if err := obs.NotifyAll(*tran); err != nil {
+	if err := obs.NotifyAll(*tran, t.merchantUseCase); err != nil {
 		return err
 	}
 	return nil

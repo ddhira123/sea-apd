@@ -9,6 +9,7 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
+	github.com/mailgun/mailgun-go/v4 v4.1.4
 	github.com/satori/go.uuid v1.2.0
 	golang.org/x/tools v0.0.0-20200904140424-93eecc3576be // indirect
 )
