@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"github.com/golang/mock/gomock"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	merchant3 "github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
@@ -19,7 +20,7 @@ var (
 		UserId:     "1",
 	}
 	mockTransactionEntity = transaction.Transaction{
-		Status:     transactionStatus["ONPROGRESS"],
+		Status:     transaction_status.ToString(transaction_status.WAITING_CONFIRMATION),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
@@ -27,7 +28,7 @@ var (
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
 		TransactionId: "1",
-		Status:        "accepted",
+		Status:        transaction_status.ACCEPTED,
 	}
 	mockTransactionId = "1"
 	mockUserId        = "1"
@@ -170,7 +171,7 @@ func TestTransactionUsecase_UpdateTransactionStatus(t *testing.T) {
 			args: args{
 				request: request.UpdateTransactionRequest{
 					TransactionId: "1",
-					Status:        "Fail",
+					Status:        transaction_status.OTHER,
 				},
 			},
 			wantErr: true,

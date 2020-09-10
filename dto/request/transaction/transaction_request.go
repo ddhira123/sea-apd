@@ -1,5 +1,7 @@
 package transaction
 
+import "github.com/williamchang80/sea-apd/common/constants/transaction_status"
+
 type TransactionRequest struct {
 	BankNumber string `json:"bank_number"`
 	BankName   string `json:"bank_name"`
@@ -8,6 +10,6 @@ type TransactionRequest struct {
 }
 
 type UpdateTransactionRequest struct {
-	TransactionId string `json:"transaction_id"`
-	Status        string `json:"status"`
+	TransactionId string                               `json:"transaction_id"`
+	Status        transaction_status.TransactionStatus `json:"status"`
 }

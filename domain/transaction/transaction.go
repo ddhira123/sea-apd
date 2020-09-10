@@ -3,16 +3,28 @@ package transaction
 import (
 	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/domain"
+	"github.com/williamchang80/sea-apd/domain/product"
 	"github.com/williamchang80/sea-apd/dto/request/transaction"
+	"time"
 )
 
 type Transaction struct {
 	domain.Base
-	Status     string `json:"status"`
-	BankNumber string `json:"bank_number"`
-	BankName   string `json:"bank_name"`
-	Amount     int    `json:"amount"`
-	UserId     string `json:"user_id"`
+	BankNumber string            `json:"bank_number"`
+	BankName   string            `json:"bank_name"`
+	Amount     int               `json:"amount"`
+	UserId     string            `json:"user_id"`
+	Status     string            `json:"status"`
+	Products   []product.Product `json:"products"`
+}
+
+type ProductTransaction struct {
+	ProductId     string     `json:"product_id"`
+	TransactionId string     `json:"transaction_id"`
+	Amount        int        `json:"amount"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
+	DeletedAt     *time.Time `sql:"index" json:"deleted_at"`
 }
 
 type TransactionUsecase interface {

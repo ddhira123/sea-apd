@@ -20,9 +20,8 @@ var (
 		Amount:     10000,
 		UserId:     "1",
 	}
-	transactionStatus     = transaction_status.GetTransactionStatus()
 	mockTransactionEntity = domain.Transaction{
-		Status:     transactionStatus["ONPROGRESS"],
+		Status:     transaction_status.ToString(transaction_status.WAITING_PAYMENT),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
@@ -30,7 +29,7 @@ var (
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
 		TransactionId:     "1",
-		Status: "accepted",
+		Status: transaction_status.WAITING_PAYMENT,
 	}
 	mockTransactionId = "1"
 )
@@ -98,7 +97,7 @@ func TestTransactionRepository_CreateTransaction(t *testing.T) {
 					VALUES (?,?,?,?,?,?,?,?) RETURNING "transactions"."id"
 					`)).WithArgs(
 					sqlmock.AnyArg(),
-					transactionStatus["onprogress"],
+					transaction_status.WAITING_PAYMENT,
 					"123456789",
 					"Mock name",
 					10,
@@ -193,7 +192,7 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 			name: "fail with invalid id",
 			args: args{
 				productId: "0",
-				status:    transactionStatus["Accepted"],
+				status:   transaction_status.ToString(transaction_status.ACCEPTED),
 			},
 			wantErr: true,
 			initMock: func() *gorm.DB {
@@ -202,7 +201,7 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 					SET "status" = $1
 					WHERE "transactions"."deleted_at" 
 						IS NULL AND ((id = 0))
-				`)).WithArgs(transactionStatus["Accepted"]).
+				`)).WithArgs(transaction_status.ToString(transaction_status.ACCEPTED)).
 					WillReturnError(errors.New("No data found"))
 				return db
 			},
@@ -241,7 +240,7 @@ func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
 			args: args{
 				productId: "0",
 				requiredStatus: []string{
-					transactionStatus["failed"],
+					transaction_status.ToString(transaction_status.OTHER),
 				},
 			},
 			wantErr: true,
@@ -251,7 +250,7 @@ func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
 					SET "status" = $1
 					WHERE "transactions"."deleted_at" 
 						IS NULL AND ((id = 0))
-				`)).WithArgs(transactionStatus["Accepted"]).
+				`)).WithArgs(transaction_status.ToString(transaction_status.ACCEPTED)).
 					WillReturnError(errors.New("No data found"))
 				return db
 			},

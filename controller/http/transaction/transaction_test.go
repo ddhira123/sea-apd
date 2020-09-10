@@ -5,6 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo"
 	message "github.com/williamchang80/sea-apd/common/constants/response"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	domain "github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/dto/request/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
@@ -23,7 +24,7 @@ import (
 var (
 	mockUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{
 		TransactionId: "1",
-		Status:        "accepted",
+		Status:        transaction_status.ACCEPTED,
 	}
 	mockCreateTransactionRequest = transaction.TransactionRequest{
 		BankNumber: "123456789",
