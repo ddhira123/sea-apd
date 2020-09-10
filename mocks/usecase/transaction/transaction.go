@@ -47,3 +47,7 @@ func (m MockUsecase) GetTransactionHistory(userId string) ([]domain.Transaction,
 	}
 	return nil, errors.New("User Id cannot be empty")
 }
+
+func (m MockUsecase) GetMerchantRequestItem(merchantId string) ([]domain.Transaction, error) {
+	panic("implement me")
+}

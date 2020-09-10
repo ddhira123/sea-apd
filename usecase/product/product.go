@@ -16,7 +16,7 @@ func ConvertToDomain(p request.ProductRequest) product.Product {
 		Price:       p.Price,
 		Image:       "",
 		Stock:       p.Stock,
-		MerchantId: p.MerchantId,
+		MerchantId:  p.MerchantId,
 	}
 }
 func NewProductUseCase(p product.ProductRepository) product.ProductUsecase {

@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"github.com/golang/mock/gomock"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	merchant3 "github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
@@ -16,18 +17,20 @@ var (
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
+		MerchantId: "1",
 	}
 	mockTransactionEntity = transaction.Transaction{
-		Status:     transactionStatus["ONPROGRESS"],
+		Status:     transaction_status.ToString(transaction_status.WAITING_CONFIRMATION),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
+		MerchantId: "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
 		TransactionId: "1",
-		Status:        "accepted",
+		Status:        transaction_status.ACCEPTED,
 	}
 	mockTransactionId = "1"
 	mockUserId        = "1"
@@ -86,7 +89,7 @@ func TestConvertToDomain(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := convertTransactionRequestToDomain(tt.args.productRequest); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConvertToDomain() = %v, want %v", got, tt.want)
+				t.Errorf("ConvertToDomain() = %#v, want %#v", got, tt.want)
 			}
 		})
 	}
@@ -170,7 +173,7 @@ func TestTransactionUsecase_UpdateTransactionStatus(t *testing.T) {
 			args: args{
 				request: request.UpdateTransactionRequest{
 					TransactionId: "1",
-					Status:        "Fail",
+					Status:        transaction_status.OTHER,
 				},
 			},
 			wantErr: true,

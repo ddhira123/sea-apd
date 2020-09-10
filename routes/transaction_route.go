@@ -19,8 +19,15 @@ func NewTransactionRoute(e *echo.Echo) Routes {
 	merchantRoute := NewMerchantRoute(e)
 	db := db.Postgres()
 	if db != nil {
-		d := db.AutoMigrate(&domain.Transaction{})
-		d.Model(&domain.Transaction{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+		d := db.AutoMigrate(&domain.Transaction{}, &domain.ProductTransaction{})
+		d.Model(&domain.Transaction{}).AddForeignKey("customer_id", "users(id)",
+			"CASCADE", "CASCADE")
+		d.Model(&domain.Transaction{}).AddForeignKey("merchant_id", "merchants(id)",
+			"CASCADE", "CASCADE")
+		d.Model(&domain.ProductTransaction{}).AddForeignKey("product_id", "products(id)",
+			"CASCADE", "CASCADE")
+		d.Model(&domain.ProductTransaction{}).AddForeignKey("transaction_id", "transactions(id)",
+			"CASCADE", "CASCADE")
 	}
 	repo := transaction.NewTransactionRepository(db)
 	usecase := usecase.NewTransactionUsecase(repo, merchantRoute.usecase)

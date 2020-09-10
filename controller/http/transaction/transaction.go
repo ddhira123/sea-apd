@@ -21,6 +21,7 @@ func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) tr
 	e.POST("/api/transaction/status", c.UpdateTransactionStatus)
 	e.GET("/api/transaction", c.GetTransactionById)
 	e.GET("/api/transactions/history", c.GetTransactionHistory)
+	e.GET("/api/transactions/request", c.GetMerchantRequestItem)
 	return c
 }
 
@@ -79,6 +80,24 @@ func (t *TransactionController) GetTransactionById(c echo.Context) error {
 func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
 	id := c.QueryParam("userId")
 	tr, err := t.usecase.GetTransactionHistory(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, response.GetTransactionHistoryResponse{
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: tr,
+	})
+}
+
+func (t *TransactionController) GetMerchantRequestItem(c echo.Context) error {
+	id := c.QueryParam("merchantId")
+	tr, err := t.usecase.GetMerchantRequestItem(id)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, &base.BaseResponse{
 			Code:    http.StatusNotFound,
