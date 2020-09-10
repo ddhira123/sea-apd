@@ -2,8 +2,8 @@ package transaction
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
+	"github.com/williamchang80/sea-apd/domain/transaction"
 )
 
 type TransactionRepository struct {
@@ -47,9 +47,10 @@ func (t TransactionRepository) GetTransactionByRequiredStatus(requiredStatus []s
 
 func (t TransactionRepository) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
 	var transactions []transaction.Transaction
-	onRequestMerchantStatus := transaction_status.ToString(transaction_status.ACCEPTED)
-	err := t.db.Where("status = ?", onRequestMerchantStatus).
-		Where("merchants_id = ?", merchantId).Find(&transactions).Error
+	onRequestMerchantStatus := transaction_status.ToString(transaction_status.WAITING_DELIVERY)
+	err := t.db.Model(&transactions).Where("status = ?", onRequestMerchantStatus).
+		Where("merchant_id = ?", merchantId).
+		Preload("ProductDetails").Find(&transactions).Error
 	if err != nil {
 		return nil, err
 	}

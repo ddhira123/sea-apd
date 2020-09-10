@@ -21,6 +21,7 @@ func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) tr
 	e.POST("/api/transaction/status", c.UpdateTransactionStatus)
 	e.GET("/api/transaction", c.GetTransactionById)
 	e.GET("/api/transactions/history", c.GetTransactionHistory)
+	e.GET("/api/transactions/request", c.GetMerchantRequestItem)
 	return c
 }
 
