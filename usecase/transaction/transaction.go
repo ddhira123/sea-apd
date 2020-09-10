@@ -2,15 +2,28 @@ package transaction
 
 import (
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
+	"github.com/williamchang80/sea-apd/common/observer"
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
-	merchant2 "github.com/williamchang80/sea-apd/dto/request/merchant"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
 )
+
+var obs *TransactionObserver
 
 type TransactionUsecase struct {
 	tr              transaction.TransactionRepository
 	merchantUseCase merchant.MerchantUsecase
+}
+
+type TransactionObserver struct {
+	observer.TransactionObservable
+}
+
+func NewTransactionUsecase(repo transaction.TransactionRepository,
+	merchantUseCase merchant.MerchantUsecase) transaction.TransactionUsecase {
+	obs = CreateObserverable()
+	obs.AttachObservers()
+	return &TransactionUsecase{tr: repo, merchantUseCase: merchantUseCase}
 }
 
 func convertTransactionRequestToDomain(t transaction2.TransactionRequest) transaction.Transaction {
@@ -23,15 +36,19 @@ func convertTransactionRequestToDomain(t transaction2.TransactionRequest) transa
 	}
 }
 
-func NewTransactionUsecase(repo transaction.TransactionRepository,
-	merchantUseCase merchant.MerchantUsecase) transaction.TransactionUsecase {
-	return &TransactionUsecase{tr: repo, merchantUseCase: merchantUseCase}
-}
-
 func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRequest) error {
 	tran := convertTransactionRequestToDomain(request)
 	err := t.tr.CreateTransaction(tran)
 	return err
+}
+
+func (i *TransactionObserver) AttachObservers() {
+	i.TransactionObservable.AddObserver(&UpdateMerchantBalanceObserver{})
+	i.TransactionObservable.AddObserver(&NotifyAdminObserver{})
+}
+
+func CreateObserverable() *TransactionObserver {
+	return &TransactionObserver{}
 }
 
 func (t TransactionUsecase) UpdateTransactionStatus(request transaction2.
@@ -41,13 +58,10 @@ UpdateTransactionRequest) error {
 	if err != nil {
 		return err
 	}
-	if request.Status == transaction_status.WAITING_DELIVERY {
-		t.merchantUseCase.UpdateMerchantBalance(merchant2.UpdateMerchantBalanceRequest{
-			Amount:     tran.Amount,
-			MerchantId: tran.UserId,
-		})
+	if err := obs.NotifyAll(*tran); err != nil {
+		return err
 	}
-	return err
+	return nil
 }
 
 func (t TransactionUsecase) GetTransactionById(id string) (*transaction.Transaction, error) {
