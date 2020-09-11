@@ -19,11 +19,13 @@ type UserRepository interface {
 	CreateUser(User) error
 	GetUserByEmail(email string) (*User, error)
 	UpdateUserRole(role string, userId string) error
+	GetUserById(userId string) (*User, error)
 }
 
 type UserUsecase interface {
 	CreateUser(request auth.RegisterUserRequest) error
 	UpdateUserRole(request user.UpdateUserRoleRequest) error
+	GetUserById(userId string) (*User, error)
 }
 
 type UserController interface {

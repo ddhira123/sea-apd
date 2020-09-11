@@ -19,7 +19,7 @@ type Merchant struct {
 type MerchantRepository interface {
 	UpdateMerchantBalance(amount int, merchantId string) error
 	GetMerchantBalance(merchantId string) (int, error)
-	RegisterMerchant(merchant Merchant) error
+	RegisterMerchant(merchant Merchant) (*Merchant, error)
 	GetMerchants() ([]Merchant, error)
 	GetMerchantById(merchantId string) (*Merchant, error)
 	UpdateMerchantApprovalStatus(merchantId string, status string) error

@@ -1,8 +1,11 @@
 package merchant
 
 import (
+	"github.com/williamchang80/sea-apd/common/constants/mailer_type"
 	"github.com/williamchang80/sea-apd/common/constants/merchant_status"
 	"github.com/williamchang80/sea-apd/common/constants/user_role"
+	"github.com/williamchang80/sea-apd/common/mailer"
+	"github.com/williamchang80/sea-apd/common/mailer/factory"
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	user "github.com/williamchang80/sea-apd/domain/user"
 	request "github.com/williamchang80/sea-apd/dto/request/merchant"
@@ -14,6 +17,9 @@ type MerchantUsecase struct {
 	usecase user.UserUsecase
 }
 
+type NotifyAdminMailer struct {
+}
+
 func NewMerchantUsecase(m merchant.MerchantRepository, usecase user.
 UserUsecase) merchant.MerchantUsecase {
 	mc := MerchantUsecase{mc: m, usecase: usecase}
@@ -23,7 +29,7 @@ UserUsecase) merchant.MerchantUsecase {
 func ConvertMerchantRequestToEntity(m request.MerchantRequest) merchant.Merchant {
 	return merchant.Merchant{
 		Name:     m.Name,
-		Balance:  m.Balance,
+		Balance:  0,
 		UserId:   m.UserId,
 		Brand:    m.Brand,
 		Address:  m.Address,
@@ -48,8 +54,26 @@ func (m MerchantUsecase) GetMerchantBalance(merchantId string) (int, error) {
 
 func (m MerchantUsecase) RegisterMerchant(request request.MerchantRequest) error {
 	merch := ConvertMerchantRequestToEntity(request)
-	err := m.mc.RegisterMerchant(merch)
-	return err
+	r, err := m.mc.RegisterMerchant(merch)
+	if err != nil {
+		return err
+	}
+	u, err := m.usecase.GetUserById(r.UserId)
+	if err != nil {
+		return err
+	}
+	notifyAdminOnMerchantRegister(*u)
+	return nil
+}
+
+func notifyAdminOnMerchantRegister(u user.User) error {
+	mail := factory.CreateMailerFactory(mailer_type.AUTH)
+	mails := mail.CreateMail(u, user_role.ToString(user_role.MERCHANT))
+	err := mailer.SendEmail(mails)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m MerchantUsecase) GetMerchants() ([]merchant.Merchant, error) {

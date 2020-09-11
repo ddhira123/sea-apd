@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/golang/mock/gomock"
+	"github.com/williamchang80/sea-apd/domain/user"
 	"github.com/williamchang80/sea-apd/dto/request/auth"
 	user2 "github.com/williamchang80/sea-apd/dto/request/user"
 )
@@ -9,7 +10,6 @@ import (
 type MockUsecase struct {
 	ctrl *gomock.Controller
 }
-
 
 func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 	return &MockUsecase{
@@ -22,5 +22,9 @@ func (m MockUsecase) CreateUser(request auth.RegisterUserRequest) error {
 }
 
 func (m MockUsecase) UpdateUserRole(request user2.UpdateUserRoleRequest) error {
+	panic("implement me")
+}
+
+func (m MockUsecase) GetUserById(userId string) (*user.User, error) {
 	panic("implement me")
 }

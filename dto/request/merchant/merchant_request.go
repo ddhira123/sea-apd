@@ -9,7 +9,6 @@ type UpdateMerchantBalanceRequest struct {
 
 type MerchantRequest struct {
 	Name    string `json:"name"`
-	Balance int    `json:"balance"`
 	UserId  string `json:"user_id"`
 	Brand   string `json:"brand"`
 	Address string `json:"address"`

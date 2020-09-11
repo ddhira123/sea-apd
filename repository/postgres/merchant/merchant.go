@@ -57,11 +57,11 @@ func (m MerchantRepository) GetMerchantByUserId(userId string) (*merchant.Mercha
 	return &merchant, nil
 }
 
-func (m MerchantRepository) RegisterMerchant(merchant merchant.Merchant) error {
+func (m MerchantRepository) RegisterMerchant(merchant merchant.Merchant) (*merchant.Merchant, error) {
 	if err := m.db.Create(&merchant).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &merchant, nil
 }
 
 func (m MerchantRepository) UpdateMerchantApprovalStatus(merchantId string, status string) error {

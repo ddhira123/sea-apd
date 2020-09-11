@@ -30,6 +30,15 @@ func (u UserRepository) GetUserByEmail(email string) (*user.User, error) {
 }
 
 func (u UserRepository) UpdateUserRole(role string, userId string) error {
-	err := u.db.Model(&user.User{}).Where("id = ?",userId).Updates(user.User{Role: role}).Error
+	err := u.db.Model(&user.User{}).Where("id = ?", userId).Updates(user.User{Role: role}).Error
 	return err
+}
+
+func (u UserRepository) GetUserById(userId string) (*user.User, error) {
+	var user user.User
+	if err := u.db.Where("id = ?", userId).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+
 }

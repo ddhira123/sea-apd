@@ -17,7 +17,7 @@ func NewUserUsecase(repo user.UserRepository) user.UserUsecase {
 	return UserUsecase{repo: repo}
 }
 
-func convertRegisterRequestToUserDomain(request auth.RegisterUserRequest ) user.User {
+func convertRegisterRequestToUserDomain(request auth.RegisterUserRequest) user.User {
 	return user.User{
 		Name:     request.Name,
 		Email:    request.Email,
@@ -38,8 +38,16 @@ func (u UserUsecase) CreateUser(request auth.RegisterUserRequest) error {
 }
 
 func (u UserUsecase) UpdateUserRole(request user2.UpdateUserRoleRequest) error {
-	if err := u.repo.UpdateUserRole(user_role.ToString(request.Role), request.UserId);err != nil {
+	if err := u.repo.UpdateUserRole(user_role.ToString(request.Role), request.UserId); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (u UserUsecase) GetUserById(userId string) (*user.User, error) {
+	user, err := u.repo.GetUserById(userId)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
