@@ -22,7 +22,7 @@ func NewMerchantController(e *echo.Echo, m merchant.MerchantUsecase) merchant.Me
 	e.POST("/api/merchant", c.RegisterMerchant)
 	e.GET("/api/merchant", c.GetMerchantById)
 	e.GET("/api/merchants", c.GetMerchants)
-	e.GET("/api/merchants/users", c.GetMerchantsByUser)
+	e.PUT("/api/merchant/status", c.UpdateMerchantApprovalStatus)
 	return c
 }
 
@@ -99,21 +99,18 @@ func (m *MerchantController) GetMerchants(c echo.Context) error {
 	})
 }
 
-func (m *MerchantController) GetMerchantsByUser(c echo.Context) error {
-	userId := c.QueryParam("userId")
-	merchants, err := m.usecase.GetMerchantsByUser(userId)
-	if err != nil {
-		c.JSON(http.StatusNotFound, &base.BaseResponse{
+func (m *MerchantController) UpdateMerchantApprovalStatus(c echo.Context) error {
+	var request request.UpdateMerchantApprovalStatusRequest
+	c.Bind(&request)
+
+	if err := m.usecase.UpdateMerchantApprovalStatus(request); err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
 			Code:    http.StatusNotFound,
 			Message: message.NOT_FOUND,
 		})
 	}
-
-	return c.JSON(http.StatusOK, &response.GetMerchantsResponse{
-		BaseResponse: base.BaseResponse{
-			Code:    http.StatusOK,
-			Message: message.SUCCESS,
-		},
-		Data: domain.MerchantListDto{Merchants: merchants},
+	return c.JSON(http.StatusOK, &base.BaseResponse{
+		Code:    http.StatusCreated,
+		Message: message.SUCCESS,
 	})
 }

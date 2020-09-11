@@ -1,6 +1,7 @@
 package merchant
 
 import (
+	"github.com/williamchang80/sea-apd/mocks/usecase/user"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -24,6 +25,7 @@ func TestNewMerchantController(t *testing.T) {
 	defer ctrl.Finish()
 	ctx := echo.New()
 	repo := merchant.NewMockRepository(ctrl)
+	userUsecase := user.NewMockUsecase(ctrl)
 	type args struct {
 		ctx *echo.Echo
 	}
@@ -39,7 +41,7 @@ func TestNewMerchantController(t *testing.T) {
 				ctx: ctx,
 			},
 			want: &MerchantController{
-				usecase: merchant2.NewMerchantUsecase(repo),
+				usecase: merchant2.NewMerchantUsecase(repo, userUsecase),
 			},
 			initMock: func() domain.MerchantUsecase {
 				c := merchant_mock_usecase.NewMockUsecase(ctrl)

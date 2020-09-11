@@ -1,6 +1,8 @@
 package merchant
 
 import (
+	"github.com/williamchang80/sea-apd/domain/user"
+	user2 "github.com/williamchang80/sea-apd/mocks/usecase/user"
 	"reflect"
 	"testing"
 
@@ -13,6 +15,7 @@ import (
 func TestNewMerchantUsecase(t *testing.T) {
 	type args struct {
 		repository merchant.MerchantRepository
+		uc    user.UserUsecase
 	}
 	tests := []struct {
 		name string
@@ -23,6 +26,7 @@ func TestNewMerchantUsecase(t *testing.T) {
 			name: "success",
 			args: args{
 				repository: nil,
+				uc:    nil,
 			},
 			want: MerchantUsecase{
 				mc: nil,
@@ -31,7 +35,8 @@ func TestNewMerchantUsecase(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewMerchantUsecase(tt.args.repository); !reflect.DeepEqual(got, tt.want) {
+			if got := NewMerchantUsecase(tt.args.repository, tt.args.uc);
+				!reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewMerchantUsecase() = %v, want %v", got, tt.want)
 			}
 		})
@@ -60,7 +65,8 @@ func TestMerchantUsecase_GetMerchantBalance(t *testing.T) {
 			wantErr: false,
 			initMock: func() merchant.MerchantUsecase {
 				r := merchant2.NewMockRepository(ctrl)
-				return NewMerchantUsecase(r)
+				u := user2.NewMockUsecase(ctrl)
+				return NewMerchantUsecase(r, u)
 			},
 		},
 		{
@@ -71,7 +77,8 @@ func TestMerchantUsecase_GetMerchantBalance(t *testing.T) {
 			wantErr: true,
 			initMock: func() merchant.MerchantUsecase {
 				r := merchant2.NewMockRepository(ctrl)
-				return NewMerchantUsecase(r)
+				u := user2.NewMockUsecase(ctrl)
+				return NewMerchantUsecase(r, u)
 			},
 		},
 	}
@@ -114,7 +121,8 @@ func TestMerchantUsecase_UpdateMerchantBalance(t *testing.T) {
 			wantErr: false,
 			initMock: func() merchant.MerchantUsecase {
 				r := merchant2.NewMockRepository(ctrl)
-				return NewMerchantUsecase(r)
+				u := user2.NewMockUsecase(ctrl)
+				return NewMerchantUsecase(r, u)
 			},
 		},
 		{
@@ -125,7 +133,8 @@ func TestMerchantUsecase_UpdateMerchantBalance(t *testing.T) {
 			wantErr: true,
 			initMock: func() merchant.MerchantUsecase {
 				r := merchant2.NewMockRepository(ctrl)
-				return NewMerchantUsecase(r)
+				u := user2.NewMockUsecase(ctrl)
+				return NewMerchantUsecase(r, u)
 			},
 		},
 	}

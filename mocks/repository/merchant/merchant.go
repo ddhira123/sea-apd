@@ -33,12 +33,12 @@ func (m MockRepository) GetMerchantBalance(merchantId string) (int, error) {
 	return 100, nil
 }
 
-func (m MockRepository) RegisterMerchant(merchant merchant.Merchant) error {
+func (m MockRepository) RegisterMerchant(merchant merchant.Merchant) (*merch.Merchant, error) {
 	var mh = merch.Merchant{}
 	if merchant == mh {
-		return errors.New("Cannot Register Merchant")
+		return nil,errors.New("Cannot Register Merchant")
 	}
-	return nil
+	return &merch.Merchant{},nil
 }
 
 func (m MockRepository) GetMerchants() ([]merchant.Merchant, error) {
@@ -58,4 +58,8 @@ func (m MockRepository) GetMerchantsByUser(userId string) ([]merchant.Merchant, 
 		return []merchant.Merchant{}, nil
 	}
 	return nil, errors.New("Cannot Get Merchants By User")
+}
+
+func (m MockRepository) UpdateMerchantApprovalStatus(merchantId string, status string) error {
+	panic("implement me")
 }

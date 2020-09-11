@@ -13,10 +13,11 @@ var UserRoleList = []string{
 	"customer",
 	"merchant",
 	"admin",
+	"other",
 }
 
 func ToString(ts UserRole) string {
-	if ts < CUSTOMER || ts > ADMIN {
+	if ts < CUSTOMER || ts > OTHER {
 		return ""
 	}
 	return UserRoleList[ts]

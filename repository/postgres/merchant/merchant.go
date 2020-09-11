@@ -48,17 +48,25 @@ func (m MerchantRepository) GetMerchantById(merchantId string) (*merchant.Mercha
 	return &merchant, nil
 }
 
-func (m MerchantRepository) GetMerchantsByUser(userId string) ([]merchant.Merchant, error) {
-	var merchants []merchant.Merchant
-	err := m.db.Where("user_id = ?", userId).Find(&merchants).Error
+func (m MerchantRepository) GetMerchantByUserId(userId string) (*merchant.Merchant, error) {
+	var merchant merchant.Merchant
+	err := m.db.Where("user_id = ?", userId).Find(&merchant).Error
 	if err != nil {
 		return nil, err
 	}
-	return merchants, nil
+	return &merchant, nil
 }
 
-func (m MerchantRepository) RegisterMerchant(merchant merchant.Merchant) error {
-	if err := m.db.Debug().Create(&merchant).Error; err != nil {
+func (m MerchantRepository) RegisterMerchant(merchant merchant.Merchant) (*merchant.Merchant, error) {
+	if err := m.db.Create(&merchant).Error; err != nil {
+		return nil, err
+	}
+	return &merchant, nil
+}
+
+func (m MerchantRepository) UpdateMerchantApprovalStatus(merchantId string, status string) error {
+	if err := m.db.Model(&merchant.Merchant{}).Where("id = ?", merchantId).Update(
+		merchant.Merchant{Approval: status}).Error; err != nil {
 		return err
 	}
 	return nil
