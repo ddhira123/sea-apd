@@ -3,8 +3,8 @@ package routes
 import (
 	"github.com/labstack/echo"
 	middleware2 "github.com/labstack/echo/middleware"
-	message "github.com/williamchang80/sea-apd/common/constants/response"
 	"github.com/williamchang80/sea-apd/common/auth"
+	message "github.com/williamchang80/sea-apd/common/constants/response"
 	"github.com/williamchang80/sea-apd/dto/response/base"
 	"net/http"
 	"os"
@@ -12,9 +12,9 @@ import (
 )
 
 type Routes struct {
-	controller interface{}
-	usecase    interface{}
-	repository interface{}
+	Controller interface{}
+	Usecase    interface{}
+	Repository interface{}
 }
 
 func InitMainRoutes(echo *echo.Echo) {

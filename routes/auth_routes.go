@@ -14,7 +14,7 @@ type AuthRoute struct {
 
 func NewAuthRoute(e *echo.Echo) AuthRoute {
 	user := NewUserRoute(e)
-	usecase := auth.NewAuthUsecase(user.repository)
+	usecase := auth.NewAuthUsecase(user.Repository)
 	c := controller.NewAuthController(e, usecase)
 	return AuthRoute{
 		controller: c,

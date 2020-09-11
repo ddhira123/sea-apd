@@ -22,6 +22,7 @@ func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) tr
 	e.GET("/api/transaction", c.GetTransactionById)
 	e.GET("/api/transactions/history", c.GetTransactionHistory)
 	e.GET("/api/transactions/request", c.GetMerchantRequestItem)
+	e.POST("/api/transaction/payment", c.PayTransaction)
 	return c
 }
 
@@ -110,5 +111,21 @@ func (t *TransactionController) GetMerchantRequestItem(c echo.Context) error {
 			Message: message.SUCCESS,
 		},
 		Data: tr,
+	})
+}
+
+func (t *TransactionController) PayTransaction(c echo.Context) error {
+	var request transaction2.PaymentRequest
+	c.Bind(&request)
+	err := t.usecase.PayTransaction(request)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, base.BaseResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
 	})
 }

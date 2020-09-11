@@ -1,17 +1,14 @@
 package transaction
 
 import (
-	"context"
-	"fmt"
-	"github.com/mailgun/mailgun-go/v4"
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
+	"github.com/williamchang80/sea-apd/common/mailer"
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	merchant2 "github.com/williamchang80/sea-apd/dto/request/merchant"
-	"os"
-	"strings"
-	"time"
 )
+
+var mail mailer.MailFactory
 
 type UpdateMerchantBalanceObserver struct {
 }
@@ -34,18 +31,28 @@ type NotifyAdminObserver struct {
 func (n *NotifyAdminObserver) Update(transaction transaction.Transaction,
 	t merchant.MerchantUsecase) error {
 	if transaction_status.ParseToEnum(transaction.Status) == transaction_status.WAITING_CONFIRMATION {
-		API_KEY := os.Getenv("API_KEY")
-		DOMAIN_NAME := os.Getenv("DOMAIN_NAME")
-		mg := mailgun.NewMailgun(DOMAIN_NAME, API_KEY)
-		sender := "test@test.com"
-		subject := "Payment Confirmation"
-		recipient := "test123@test.com"
-		body := fmt.Sprintf("Hello, %v please confirm payment with id %v",
-			strings.TrimSuffix(recipient, "@"), transaction.ID)
-		message := mg.NewMessage(sender, subject, body, recipient)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-		defer cancel()
-		mg.Send(ctx, message)
+		mail = mailer.CreateMailerFactory(mailer.TRANSACTION)
+		mails := mail.CreateMail(transaction, "customer@customer.com", "merchant@merchant.com")
+		err := mailer.SendEmail(mails)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+type SendPaymentInvoiceObserver struct {
+}
+
+func (n *SendPaymentInvoiceObserver) Update(transaction transaction.Transaction,
+	t merchant.MerchantUsecase) error {
+	if transaction_status.ParseToEnum(transaction.Status) == transaction_status.WAITING_CONFIRMATION {
+		mail = mailer.CreateMailerFactory(mailer.TRANSACTION)
+		mails := mail.CreateMail(transaction, "customer@customer.com", "merchant@merchant.com")
+		err := mailer.SendEmail(mails)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

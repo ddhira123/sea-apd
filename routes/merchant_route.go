@@ -11,7 +11,7 @@ import (
 
 type MerchantRoute struct {
 	controller domain.MerchantController
-	usecase    domain.MerchantUsecase
+	Usecase    domain.MerchantUsecase
 	repository domain.MerchantRepository
 }
 
@@ -22,11 +22,11 @@ func NewMerchantRoute(e *echo.Echo) MerchantRoute {
 		d.AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 	}
 	repo := merchant.NewMerchantRepository(db)
-	usecase := use_case.NewMerchantUsecase(repo)
-	c := controller.NewMerchantController(e, usecase)
+	u := use_case.NewMerchantUsecase(repo)
+	c := controller.NewMerchantController(e, u)
 	return MerchantRoute{
 		controller: c,
-		usecase:    usecase,
+		Usecase:    u,
 		repository: repo,
 	}
 }

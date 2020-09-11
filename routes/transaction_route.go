@@ -17,6 +17,7 @@ type TransactionRoute struct {
 
 func NewTransactionRoute(e *echo.Echo) Routes {
 	merchantRoute := NewMerchantRoute(e)
+	productRoute := NewProductRoutes(e)
 	db := db.Postgres()
 	if db != nil {
 		d := db.AutoMigrate(&domain.Transaction{}, &domain.ProductTransaction{})
@@ -30,11 +31,11 @@ func NewTransactionRoute(e *echo.Echo) Routes {
 			"CASCADE", "CASCADE")
 	}
 	repo := transaction.NewTransactionRepository(db)
-	usecase := usecase.NewTransactionUsecase(repo, merchantRoute.usecase)
-	controller := controller.NewTransactionController(e, usecase)
+	u := usecase.NewTransactionUsecase(repo, merchantRoute.Usecase, productRoute.Usecase)
+	controller := controller.NewTransactionController(e, u)
 	return Routes{
-		controller: controller,
-		usecase:    usecase,
-		repository: repo,
+		Controller: controller,
+		Usecase:    u,
+		Repository: repo,
 	}
 }
