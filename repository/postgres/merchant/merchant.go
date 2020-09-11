@@ -71,3 +71,11 @@ func (m MerchantRepository) UpdateMerchantApprovalStatus(merchantId string, stat
 	}
 	return nil
 }
+
+func (m MerchantRepository) UpdateMerchant(merchantId string, merch merchant.Merchant) error {
+	if err := m.db.Model(&merch).Where("id = ?",merchantId).
+		Updates(&merch).Error; err != nil {
+		return err
+	}
+	return nil
+}

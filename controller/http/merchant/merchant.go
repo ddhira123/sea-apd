@@ -23,6 +23,7 @@ func NewMerchantController(e *echo.Echo, m merchant.MerchantUsecase) merchant.Me
 	e.GET("/api/merchant", c.GetMerchantById)
 	e.GET("/api/merchants", c.GetMerchants)
 	e.PUT("/api/merchant/status", c.UpdateMerchantApprovalStatus)
+	e.PUT("/api/merchant", c.UpdateMerchant)
 	return c
 }
 
@@ -104,6 +105,22 @@ func (m *MerchantController) UpdateMerchantApprovalStatus(c echo.Context) error 
 	c.Bind(&request)
 
 	if err := m.usecase.UpdateMerchantApprovalStatus(request); err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, &base.BaseResponse{
+		Code:    http.StatusCreated,
+		Message: message.SUCCESS,
+	})
+}
+
+func (m *MerchantController) UpdateMerchant(c echo.Context) error {
+	var request request.UpdateMerchantRequest
+	c.Bind(&request)
+
+	if err := m.usecase.UpdateMerchant(request); err != nil {
 		return c.JSON(http.StatusNotFound, &base.BaseResponse{
 			Code:    http.StatusNotFound,
 			Message: message.NOT_FOUND,

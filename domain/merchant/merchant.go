@@ -23,6 +23,7 @@ type MerchantRepository interface {
 	GetMerchants() ([]Merchant, error)
 	GetMerchantById(merchantId string) (*Merchant, error)
 	UpdateMerchantApprovalStatus(merchantId string, status string) error
+	UpdateMerchant(merchantId string, merchant Merchant) error
 }
 
 type MerchantUsecase interface {
@@ -32,6 +33,7 @@ type MerchantUsecase interface {
 	GetMerchants() ([]Merchant, error)
 	GetMerchantById(merchantId string) (*Merchant, error)
 	UpdateMerchantApprovalStatus(request merchant.UpdateMerchantApprovalStatusRequest) error
+	UpdateMerchant(request merchant.UpdateMerchantRequest) error
 }
 type MerchantController interface {
 	GetMerchantBalance(echo echo.Context) error
@@ -39,4 +41,5 @@ type MerchantController interface {
 	GetMerchantById(echo echo.Context) error
 	RegisterMerchant(echo echo.Context) error
 	UpdateMerchantApprovalStatus(echo echo.Context) error
+	UpdateMerchant(echo echo.Context) error
 }

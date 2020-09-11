@@ -63,3 +63,7 @@ func (m MockRepository) GetMerchantsByUser(userId string) ([]merchant.Merchant, 
 func (m MockRepository) UpdateMerchantApprovalStatus(merchantId string, status string) error {
 	panic("implement me")
 }
+
+func (m MockRepository) UpdateMerchant(merchantId string, merchant merch.Merchant) error {
+	panic("implement me")
+}

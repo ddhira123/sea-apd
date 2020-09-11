@@ -1,6 +1,8 @@
 package merchant
 
-import "github.com/williamchang80/sea-apd/common/constants/merchant_status"
+import (
+	"github.com/williamchang80/sea-apd/common/constants/merchant_status"
+)
 
 type UpdateMerchantBalanceRequest struct {
 	Amount     int    `json:"amount"`
@@ -18,3 +20,11 @@ type UpdateMerchantApprovalStatusRequest struct {
 	Status     merchant_status.MerchantApprovalStatus `json:"status"`
 	MerchantId string                                 `json:"merchant_id"`
 }
+
+type UpdateMerchantRequest struct {
+	MerchantId string `json:"merchant_id"`
+	Name       string `json:"name"`
+	Brand      string `json:"brand"`
+	Address    string `json:"address"`
+}
+
