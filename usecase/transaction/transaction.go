@@ -7,6 +7,7 @@ import (
 	"github.com/williamchang80/sea-apd/domain/product"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
+	"github.com/williamchang80/sea-apd/dto/request/transaction/converter"
 )
 
 var obs *TransactionObserver
@@ -105,7 +106,7 @@ func (t TransactionUsecase) PayTransaction(request transaction2.PaymentRequest) 
 	if err != nil {
 		return err
 	}
-	mergedTransaction := transaction2.MergePaymentRequestAndTransactionTotal(
+	mergedTransaction := converter.MergePaymentRequestAndTransactionTotal(
 		request, *tr, transactionTotal)
 
 	if err := t.tr.UpdateTransaction(mergedTransaction); err != nil {

@@ -1,14 +1,16 @@
 package transaction
 
 import (
+	"github.com/williamchang80/sea-apd/common/constants/mailer_type"
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	"github.com/williamchang80/sea-apd/common/mailer"
+	"github.com/williamchang80/sea-apd/common/mailer/factory"
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	merchant2 "github.com/williamchang80/sea-apd/dto/request/merchant"
 )
 
-var mail mailer.MailFactory
+var mail factory.MailFactory
 
 type UpdateMerchantBalanceObserver struct {
 }
@@ -31,7 +33,7 @@ type NotifyAdminObserver struct {
 func (n *NotifyAdminObserver) Update(transaction transaction.Transaction,
 	t merchant.MerchantUsecase) error {
 	if transaction_status.ParseToEnum(transaction.Status) == transaction_status.WAITING_CONFIRMATION {
-		mail = mailer.CreateMailerFactory(mailer.TRANSACTION)
+		mail = factory.CreateMailerFactory(mailer_type.TRANSACTION)
 		mails := mail.CreateMail(transaction, "customer@customer.com", "merchant@merchant.com")
 		err := mailer.SendEmail(mails)
 		if err != nil {
@@ -47,7 +49,7 @@ type SendPaymentInvoiceObserver struct {
 func (n *SendPaymentInvoiceObserver) Update(transaction transaction.Transaction,
 	t merchant.MerchantUsecase) error {
 	if transaction_status.ParseToEnum(transaction.Status) == transaction_status.WAITING_CONFIRMATION {
-		mail = mailer.CreateMailerFactory(mailer.TRANSACTION)
+		mail = factory.CreateMailerFactory(mailer_type.TRANSACTION)
 		mails := mail.CreateMail(transaction, "customer@customer.com", "merchant@merchant.com")
 		err := mailer.SendEmail(mails)
 		if err != nil {

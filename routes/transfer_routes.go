@@ -23,7 +23,7 @@ func NewTransferRoute(e *echo.Echo) TransferRoute {
 		d.AddForeignKey("merchant_id", "merchants(id)", "CASCADE", "CASCADE")
 	}
 	repo := repository.NewTransferRepository(db)
-	usecase := transfer.NewTransferUsecase(repo, merchant.usecase)
+	usecase := transfer.NewTransferUsecase(repo, merchant.Usecase)
 	c := controller.NewTransferController(e, usecase)
 	return TransferRoute{
 		controller: c,

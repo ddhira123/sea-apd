@@ -1,4 +1,4 @@
-package mailer
+package mailer_type
 
 type MailType int
 

@@ -2,6 +2,7 @@ package product
 
 import (
 	"github.com/williamchang80/sea-apd/domain/product"
+	"github.com/williamchang80/sea-apd/domain/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/product"
 )
 
@@ -67,4 +68,8 @@ func (s *ProductUsecase) GetProductsByMerchant(merchantId string) ([]product.Pro
 		return nil, err
 	}
 	return products, nil
+}
+
+func (s *ProductUsecase) GetProductPriceTotal(transaction transaction.Transaction) (int, error) {
+	panic("implement me")
 }
