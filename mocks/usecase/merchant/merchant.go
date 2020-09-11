@@ -9,9 +9,12 @@ import (
 )
 
 var (
-	emptyUpdateMerchantBalanceRequest = merchant.UpdateMerchantBalanceRequest{}
-	emptyMerchantRequest              = merchant.MerchantRequest{}
-	emptyMerchant                     = domain.Merchant{}
+	emptyUpdateMerchantBalanceRequest        = merchant.UpdateMerchantBalanceRequest{}
+	emptyMerchantRequest                     = merchant.MerchantRequest{}
+	emptyMerchant                            = domain.Merchant{}
+	emptyMerchantSlice                       = []domain.Merchant{}
+	emptyUpdateMerchantApprovalStatusRequest = merchant.UpdateMerchantApprovalStatusRequest{}
+	emptyUpdateMerchantRequest               = merchant.UpdateMerchantRequest{}
 )
 
 type MockUsecase struct {
@@ -53,20 +56,27 @@ func (m MockUsecase) GetMerchantById(merchantId string) (*domain.Merchant, error
 	if merchantId != "" {
 		return &emptyMerchant, nil
 	}
-	return nil, errors.New("Cannot Get Merchant By Id")
+	return nil, errors.New("cannot Get Merchant By Id")
 }
 
 func (m MockUsecase) GetMerchantsByUser(userId string) ([]domain.Merchant, error) {
 	if len(userId) == 0 {
-		return nil, errors.New("Cannot Get Merchants by User")
+		return nil, errors.New("cannot Get Merchants by User")
 	}
 	return []domain.Merchant{}, nil
 }
 
-func (m MockUsecase) UpdateMerchantApprovalStatus(request merchant.UpdateMerchantApprovalStatusRequest) error {
-	panic("implement me")
+func (m MockUsecase) UpdateMerchantApprovalStatus(request merchant.
+UpdateMerchantApprovalStatusRequest) error {
+	if request == emptyUpdateMerchantApprovalStatusRequest {
+		return errors.New("cannot update merchant status")
+	}
+	return nil
 }
 
 func (m MockUsecase) UpdateMerchant(request merchant.UpdateMerchantRequest) error {
-	panic("implement me")
+	if request == emptyUpdateMerchantRequest {
+		return errors.New("cannot update merchant")
+	}
+	return nil
 }

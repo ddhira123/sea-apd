@@ -18,11 +18,13 @@ var (
 		CustomerId: "",
 		MerchantId: "",
 	}
+	mockTransactionSlice = []transaction.Transaction{}
 )
 
 type MockRepository struct {
 	ctrl *gomock.Controller
 }
+
 func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 	mock := &MockRepository{
 		ctrl: ctrl,
@@ -59,9 +61,15 @@ func (m MockRepository) GetTransactionByRequiredStatus(requiredStatus []string, 
 }
 
 func (m MockRepository) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
-	panic("implement me")
+	if len(merchantId) == 0 {
+		return nil, errors.New("cannot get merchant request item")
+	}
+	return mockTransactionSlice, nil
 }
 
 func (m MockRepository) UpdateTransaction(transaction transaction.Transaction) error {
-	panic("implement me")
+	if reflect.DeepEqual(transaction, emptyTransaction) {
+		return errors.New("Cannot update transaction")
+	}
+	return nil
 }
