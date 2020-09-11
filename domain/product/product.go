@@ -3,6 +3,7 @@ package product
 import (
 	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/domain"
+	"github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/dto/request/product"
 )
 
@@ -23,6 +24,7 @@ type ProductUsecase interface {
 	UpdateProduct(productId string, productRequest product.ProductRequest) error
 	DeleteProduct(productId string) error
 	GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductPriceTotal(transaction transaction.Transaction) (int, error)
 }
 
 type ProductRepository interface {

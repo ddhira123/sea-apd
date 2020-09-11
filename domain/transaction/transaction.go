@@ -16,7 +16,7 @@ type Transaction struct {
 	Status     string `json:"status"`
 	MerchantId string `json:"merchant_id"`
 	ProductDetails []ProductTransaction `json:"product_details" gorm:"many2many:product_transactions;
-								      AssociationForeignKey:TransactionId""`
+								      AssociationForeignKey:TransactionId"`
 }
 
 type ProductTransaction struct {
@@ -33,6 +33,7 @@ type TransactionUsecase interface {
 	UpdateTransactionStatus(transaction.UpdateTransactionRequest) error
 	GetTransactionHistory(userId string) ([]Transaction, error)
 	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
+	PayTransaction(request transaction.PaymentRequest) error
 }
 
 type TransactionController interface {
@@ -41,6 +42,7 @@ type TransactionController interface {
 	UpdateTransactionStatus(echo.Context) error
 	GetTransactionHistory(echo.Context) error
 	GetMerchantRequestItem(echo.Context) error
+	PayTransaction(echo.Context) error
 }
 
 type TransactionRepository interface {
@@ -49,4 +51,5 @@ type TransactionRepository interface {
 	UpdateTransactionStatus(status string, id string) (*Transaction, error)
 	GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]Transaction, error)
 	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
+	UpdateTransaction(transaction Transaction) error
 }

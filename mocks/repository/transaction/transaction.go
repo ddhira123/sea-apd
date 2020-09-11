@@ -23,7 +23,6 @@ var (
 type MockRepository struct {
 	ctrl *gomock.Controller
 }
-
 func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 	mock := &MockRepository{
 		ctrl: ctrl,
@@ -60,5 +59,9 @@ func (m MockRepository) GetTransactionByRequiredStatus(requiredStatus []string, 
 }
 
 func (m MockRepository) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
+	panic("implement me")
+}
+
+func (m MockRepository) UpdateTransaction(transaction transaction.Transaction) error {
 	panic("implement me")
 }

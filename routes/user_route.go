@@ -12,7 +12,7 @@ import (
 type UserRoute struct {
 	controller domain.UserController
 	usecase    domain.UserUsecase
-	repository domain.UserRepository
+	Repository domain.UserRepository
 }
 
 func NewUserRoute(e *echo.Echo) UserRoute {
@@ -27,6 +27,6 @@ func NewUserRoute(e *echo.Echo) UserRoute {
 	return UserRoute{
 		controller: controller,
 		usecase:    u,
-		repository: repository,
+		Repository: repository,
 	}
 }

@@ -30,7 +30,7 @@ func ParseToEnum(src string) UserRole {
 		"other":    OTHER,
 	}
 	if val, exist := userRoleMap[src]; exist {
-		return userRoleMap[string(rune(val))]
+		return val
 	}
 	return userRoleMap["other"]
 }

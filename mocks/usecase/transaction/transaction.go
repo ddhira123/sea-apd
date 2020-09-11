@@ -14,6 +14,8 @@ type MockUsecase struct {
 	ctrl *gomock.Controller
 }
 
+
+
 func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 	return &MockUsecase{
 		ctrl: repo,
@@ -49,5 +51,9 @@ func (m MockUsecase) GetTransactionHistory(userId string) ([]domain.Transaction,
 }
 
 func (m MockUsecase) GetMerchantRequestItem(merchantId string) ([]domain.Transaction, error) {
+	panic("implement me")
+}
+
+func (m MockUsecase) PayTransaction(request transaction.PaymentRequest) error {
 	panic("implement me")
 }

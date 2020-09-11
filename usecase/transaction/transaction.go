@@ -4,8 +4,10 @@ import (
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	"github.com/williamchang80/sea-apd/common/observer"
 	"github.com/williamchang80/sea-apd/domain/merchant"
+	"github.com/williamchang80/sea-apd/domain/product"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
+	"github.com/williamchang80/sea-apd/dto/request/transaction/converter"
 )
 
 var obs *TransactionObserver
@@ -13,6 +15,7 @@ var obs *TransactionObserver
 type TransactionUsecase struct {
 	tr              transaction.TransactionRepository
 	merchantUseCase merchant.MerchantUsecase
+	productUseCase  product.ProductUsecase
 }
 
 type TransactionObserver struct {
@@ -20,10 +23,13 @@ type TransactionObserver struct {
 }
 
 func NewTransactionUsecase(repo transaction.TransactionRepository,
-	merchantUseCase merchant.MerchantUsecase) transaction.TransactionUsecase {
+	merchantUseCase merchant.MerchantUsecase, productUsecase product.
+ProductUsecase) transaction.TransactionUsecase {
 	obs = CreateObserverable()
 	obs.AttachObservers()
-	return &TransactionUsecase{tr: repo, merchantUseCase: merchantUseCase}
+	return &TransactionUsecase{tr: repo,
+		merchantUseCase: merchantUseCase,
+		productUseCase:  productUsecase}
 }
 
 func convertTransactionRequestToDomain(t transaction2.TransactionRequest) transaction.Transaction {
@@ -89,4 +95,28 @@ func (t TransactionUsecase) GetMerchantRequestItem(merchantId string) ([]transac
 		return nil, err
 	}
 	return tr, nil
+}
+
+func (t TransactionUsecase) PayTransaction(request transaction2.PaymentRequest) error {
+	tr, err := t.tr.GetTransactionById(request.TransactionId)
+	if err != nil {
+		return err
+	}
+	transactionTotal, err := t.productUseCase.GetProductPriceTotal(*tr)
+	if err != nil {
+		return err
+	}
+	mergedTransaction := converter.MergePaymentRequestAndTransactionTotal(
+		request, *tr, transactionTotal)
+	if err := t.tr.UpdateTransaction(mergedTransaction); err != nil {
+		return err
+	}
+	updateRequest := transaction2.UpdateTransactionRequest{
+		TransactionId: mergedTransaction.ID,
+		Status:        transaction_status.WAITING_CONFIRMATION,
+	}
+	if err := t.UpdateTransactionStatus(updateRequest); err != nil {
+		return err
+	}
+	return nil
 }
