@@ -28,3 +28,7 @@ func (m MockUsecase) UpdateUserRole(request user2.UpdateUserRoleRequest) error {
 func (m MockUsecase) GetUserById(userId string) (*user.User, error) {
 	panic("implement me")
 }
+
+func (m MockUsecase) UpdateUser(request user2.UpdateUserRequest) error {
+	panic("implement me")
+}

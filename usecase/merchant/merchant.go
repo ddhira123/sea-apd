@@ -9,6 +9,7 @@ import (
 	"github.com/williamchang80/sea-apd/domain/merchant"
 	user "github.com/williamchang80/sea-apd/domain/user"
 	request "github.com/williamchang80/sea-apd/dto/request/merchant"
+	"github.com/williamchang80/sea-apd/dto/request/merchant/converter"
 	user2 "github.com/williamchang80/sea-apd/dto/request/user"
 )
 
@@ -105,6 +106,14 @@ UpdateMerchantApprovalStatusRequest) error {
 		if err := m.usecase.UpdateUserRole(updateRequest); err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+func (m MerchantUsecase) UpdateMerchant(r request.UpdateMerchantRequest) error {
+	merchant := converter.ConvertUpdateMerchantRequestToEntity(r)
+	if err := m.mc.UpdateMerchant(r.MerchantId, merchant); err != nil {
+		return err
 	}
 	return nil
 }
