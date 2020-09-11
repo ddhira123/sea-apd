@@ -28,3 +28,8 @@ func (u UserRepository) GetUserByEmail(email string) (*user.User, error) {
 	}
 	return &user, nil
 }
+
+func (u UserRepository) UpdateUserRole(role string, userId string) error {
+	err := u.db.Model(&user.User{}).Where("id = ?",userId).Updates(user.User{Role: role}).Error
+	return err
+}

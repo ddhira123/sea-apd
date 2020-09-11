@@ -62,3 +62,7 @@ func (m MockUsecase) GetMerchantsByUser(userId string) ([]domain.Merchant, error
 	}
 	return []domain.Merchant{}, nil
 }
+
+func (m MockUsecase) UpdateMerchantApprovalStatus(request merchant.UpdateMerchantApprovalStatusRequest) error {
+	panic("implement me")
+}

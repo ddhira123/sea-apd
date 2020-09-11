@@ -2,29 +2,32 @@ package merchant
 
 import (
 	"github.com/williamchang80/sea-apd/common/constants/merchant_status"
+	"github.com/williamchang80/sea-apd/common/constants/user_role"
 	"github.com/williamchang80/sea-apd/domain/merchant"
+	user "github.com/williamchang80/sea-apd/domain/user"
 	request "github.com/williamchang80/sea-apd/dto/request/merchant"
+	user2 "github.com/williamchang80/sea-apd/dto/request/user"
 )
 
-var merchantStatus = merchant_status.GetMerchantStatus()
-
 type MerchantUsecase struct {
-	mc merchant.MerchantRepository
+	mc      merchant.MerchantRepository
+	usecase user.UserUsecase
 }
 
-func NewMerchantUsecase(m merchant.MerchantRepository) merchant.MerchantUsecase {
-	mc := MerchantUsecase{mc: m}
+func NewMerchantUsecase(m merchant.MerchantRepository, usecase user.
+UserUsecase) merchant.MerchantUsecase {
+	mc := MerchantUsecase{mc: m, usecase: usecase}
 	return mc
 }
 
-func ConvertRequest(m request.MerchantRequest) merchant.Merchant {
+func ConvertMerchantRequestToEntity(m request.MerchantRequest) merchant.Merchant {
 	return merchant.Merchant{
 		Name:     m.Name,
 		Balance:  m.Balance,
 		UserId:   m.UserId,
 		Brand:    m.Brand,
 		Address:  m.Address,
-		Approval: merchantStatus["WAITING"],
+		Approval: merchant_status.ToString(merchant_status.WAITING),
 	}
 }
 
@@ -44,7 +47,7 @@ func (m MerchantUsecase) GetMerchantBalance(merchantId string) (int, error) {
 }
 
 func (m MerchantUsecase) RegisterMerchant(request request.MerchantRequest) error {
-	merch := ConvertRequest(request)
+	merch := ConvertMerchantRequestToEntity(request)
 	err := m.mc.RegisterMerchant(merch)
 	return err
 }
@@ -65,10 +68,19 @@ func (m MerchantUsecase) GetMerchantById(merchantId string) (*merchant.Merchant,
 	return mh, nil
 }
 
-func (m MerchantUsecase) GetMerchantsByUser(userId string) ([]merchant.Merchant, error) {
-	mhs, err := m.mc.GetMerchantsByUser(userId)
-	if err != nil {
-		return nil, err
+func (m MerchantUsecase) UpdateMerchantApprovalStatus(request request.
+UpdateMerchantApprovalStatusRequest) error {
+	if err := m.mc.UpdateMerchantApprovalStatus(request.MerchantId,
+		merchant_status.ToString(request.Status)); err != nil {
+		return err
 	}
-	return mhs, nil
+	if request.Status == merchant_status.ACCEPTED {
+		merch, _ := m.mc.GetMerchantById(request.MerchantId)
+		updateRequest := user2.UpdateUserRoleRequest{Role: user_role.MERCHANT,
+			UserId: merch.UserId}
+		if err := m.usecase.UpdateUserRole(updateRequest); err != nil {
+			return err
+		}
+	}
+	return nil
 }

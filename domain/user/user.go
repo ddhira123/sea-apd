@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/domain"
 	"github.com/williamchang80/sea-apd/dto/request/auth"
+	"github.com/williamchang80/sea-apd/dto/request/user"
 )
 
 type User struct {
@@ -17,10 +18,12 @@ type User struct {
 type UserRepository interface {
 	CreateUser(User) error
 	GetUserByEmail(email string) (*User, error)
+	UpdateUserRole(role string, userId string) error
 }
 
 type UserUsecase interface {
 	CreateUser(request auth.RegisterUserRequest) error
+	UpdateUserRole(request user.UpdateUserRoleRequest) error
 }
 
 type UserController interface {

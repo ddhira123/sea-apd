@@ -59,3 +59,8 @@ func (m MockRepository) GetMerchantsByUser(userId string) ([]merchant.Merchant, 
 	}
 	return nil, errors.New("Cannot Get Merchants By User")
 }
+
+
+func (m MockRepository) UpdateMerchantApprovalStatus(merchantId string, status string) error {
+	panic("implement me")
+}
