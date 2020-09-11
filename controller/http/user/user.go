@@ -5,6 +5,7 @@ import (
 	message "github.com/williamchang80/sea-apd/common/constants/response"
 	"github.com/williamchang80/sea-apd/domain/user"
 	"github.com/williamchang80/sea-apd/dto/request/auth"
+	user2 "github.com/williamchang80/sea-apd/dto/request/user"
 	"github.com/williamchang80/sea-apd/dto/response/base"
 	"net/http"
 )
@@ -18,6 +19,7 @@ func NewUserController(e *echo.Echo, uc user.UserUsecase) user.UserController {
 		usecase: uc,
 	}
 	e.POST("api/auth/register", c.CreateUser)
+	e.PUT("api/user", c.UpdateUser)
 	return c
 }
 
@@ -36,4 +38,21 @@ func (u UserController) CreateUser(context echo.Context) error {
 		Code:    http.StatusOK,
 		Message: message.SUCCESS,
 	})
+}
+
+func (u UserController) UpdateUser(c echo.Context) error {
+	var request user2.UpdateUserRequest
+	c.Bind(&request)
+	err := u.usecase.UpdateUser(request)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, base.BaseResponse{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, base.BaseResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
+	})
+
 }

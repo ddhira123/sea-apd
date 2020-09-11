@@ -40,5 +40,8 @@ func (u UserRepository) GetUserById(userId string) (*user.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
 
+func (u UserRepository) UpdateUser(user user.User) error {
+	return u.db.Model(&user).Updates(&user).Error
 }
