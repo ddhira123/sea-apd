@@ -40,7 +40,7 @@ func ParseToEnum(src string) TransactionStatus {
 		"other":                OTHER,
 	}
 	if val, exist := transactionStatusMap[src]; exist {
-		return transactionStatusMap[string(rune(val))]
+		return val
 	}
 	return transactionStatusMap["other"]
 }

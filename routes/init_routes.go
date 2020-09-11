@@ -5,6 +5,7 @@ import (
 	middleware2 "github.com/labstack/echo/middleware"
 	"github.com/williamchang80/sea-apd/common/auth"
 	message "github.com/williamchang80/sea-apd/common/constants/response"
+	"github.com/williamchang80/sea-apd/common/mailer"
 	"github.com/williamchang80/sea-apd/dto/response/base"
 	"net/http"
 	"os"
@@ -25,7 +26,8 @@ func InitMainRoutes(echo *echo.Echo) {
 	NewTransferRoute(echo)
 	NewAuthRoute(echo)
 
-	InitMiddleware(echo)
+	mailer.InitMail()
+	//InitMiddleware(echo)
 }
 
 func InitMiddleware(e *echo.Echo) {

@@ -57,7 +57,8 @@ func (t TransactionRepository) GetMerchantRequestItem(merchantId string) ([]tran
 }
 
 func (t TransactionRepository) UpdateTransaction(transaction transaction.Transaction) error {
-	if err := t.db.Save(&transaction).Error; err != nil {
+	if err := t.db.Model(&transaction).Where("id = ?", transaction.ID).
+		Update("bank_name", "bank_number", "amount").Error; err != nil {
 		return err
 	}
 	return nil

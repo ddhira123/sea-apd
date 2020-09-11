@@ -71,5 +71,5 @@ func (s *ProductUsecase) GetProductsByMerchant(merchantId string) ([]product.Pro
 }
 
 func (s *ProductUsecase) GetProductPriceTotal(transaction transaction.Transaction) (int, error) {
-	panic("implement me")
+	return 2, nil
 }

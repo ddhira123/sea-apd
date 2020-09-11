@@ -108,7 +108,6 @@ func (t TransactionUsecase) PayTransaction(request transaction2.PaymentRequest) 
 	}
 	mergedTransaction := converter.MergePaymentRequestAndTransactionTotal(
 		request, *tr, transactionTotal)
-
 	if err := t.tr.UpdateTransaction(mergedTransaction); err != nil {
 		return err
 	}

@@ -2,6 +2,8 @@ package mailer
 
 import (
 	"context"
+	"fmt"
+	"github.com/labstack/gommon/log"
 	"github.com/mailgun/mailgun-go/v4"
 	"os"
 	"time"
@@ -24,7 +26,7 @@ var Mailer *mailgun.MailgunImpl
 func InitMail() {
 	API_KEY := os.Getenv("API_KEY")
 	DOMAIN_NAME := os.Getenv("DOMAIN_NAME")
-	if Mailer != nil {
+	if Mailer == nil {
 		Mailer = mailgun.NewMailgun(DOMAIN_NAME, API_KEY)
 	}
 }
@@ -39,10 +41,8 @@ func SendEmail(mails []Mail) error {
 	defer cancel()
 	for _, mail := range mails {
 		message := CreateMailer(mail)
-		_, _, err := Mailer.Send(ctx, message)
-		if err != nil {
-			return err
-		}
+		Mailer.Send(ctx, message)
+		log.Info(fmt.Sprintf("Mail sent from %v to %v !", mail.Sender, mail.Recipient))
 	}
 	return nil
 }

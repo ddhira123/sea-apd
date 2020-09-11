@@ -8,15 +8,13 @@ import (
 	"strings"
 )
 
-type Transaction transaction.Transaction
-
 type TransactionMailer struct {
 }
 
-func (t *TransactionMailer) CreateMail(transaction ...interface{}) []mailer.Mail {
-	s, _ := transaction[0].(Transaction)
-	customerEmail, _ := transaction[1].(string)
-	merchantEmail, _ := transaction[2].(string)
+func (t *TransactionMailer) CreateMail(tr ...interface{}) []mailer.Mail {
+	s, _ := tr[0].(transaction.Transaction)
+	customerEmail, _ := tr[1].(string)
+	merchantEmail, _ := tr[2].(string)
 	switch transaction_status.ParseToEnum(s.Status) {
 	case transaction_status.WAITING_CONFIRMATION:
 		return CreateInvoiceAndNotificationMailer(s, customerEmail, merchantEmail)
@@ -28,7 +26,7 @@ func (t *TransactionMailer) CreateMail(transaction ...interface{}) []mailer.Mail
 	return nil
 }
 
-func CreateInvoiceAndNotificationMailer(transaction Transaction, customerEmail string,
+func CreateInvoiceAndNotificationMailer(transaction transaction.Transaction, customerEmail string,
 	merchantEmail string) []mailer.Mail {
 	invoiceMailer := mailer.Mail{
 		Sender:    mailer.MailSender,
@@ -58,7 +56,7 @@ func CreateInvoiceAndNotificationMailer(transaction Transaction, customerEmail s
 	return mailers
 }
 
-func CreateRequestMailer(transaction Transaction, customerEmail string,
+func CreateRequestMailer(transaction transaction.Transaction, customerEmail string,
 	merchantEmail string) []mailer.Mail {
 	createRequestMailer := mailer.Mail{
 		Sender:    mailer.MailSender,
@@ -76,11 +74,11 @@ func CreateRequestMailer(transaction Transaction, customerEmail string,
 	return mailers
 }
 
-func CreateArrivalMailer(transaction Transaction, customerEmail string,
+func CreateArrivalMailer(transaction transaction.Transaction, customerEmail string,
 	merchantEmail string) []mailer.Mail {
 	createRequestMailer := mailer.Mail{
 		Sender:    mailer.MailSender,
-		Subject:   "Item confimed!",
+		Subject:   "Item confirmed!",
 		Recipient: customerEmail,
 		Body: fmt.Sprintf(`Hello, %v your transaction with id %v
 			has been confimed by %v and delivered! Please wait for item to arrived`,
