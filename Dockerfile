@@ -9,4 +9,5 @@ FROM alpine:3.10
 WORKDIR /usr/bin
 COPY --from=build /go/src/app/bin /go/bin
 EXPOSE 8090
+EXPOSE 8091
 ENTRYPOINT /go/bin/test

@@ -3,10 +3,13 @@ package routes
 import (
 	"github.com/labstack/echo"
 	middleware2 "github.com/labstack/echo/middleware"
+	v4 "github.com/labstack/echo/v4"
 	"github.com/williamchang80/sea-apd/common/auth"
 	message "github.com/williamchang80/sea-apd/common/constants/response"
 	"github.com/williamchang80/sea-apd/common/mailer"
+	"github.com/williamchang80/sea-apd/docs"
 	"github.com/williamchang80/sea-apd/dto/response/base"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -29,6 +32,17 @@ func InitMainRoutes(echo *echo.Echo) {
 
 	mailer.InitMail()
 	//InitMiddleware(echo)
+	serveSwaggerUI()
+}
+
+func serveSwaggerUI() {
+	e := v4.New()
+	e.GET("/docs/*", docs.WrapHandler)
+	go func() {
+		swaggerPort := ":" + os.Getenv("SWAGGER_PORT")
+		log.Panic(http.ListenAndServe(swaggerPort, e))
+	}()
+
 }
 
 func InitMiddleware(e *echo.Echo) {
