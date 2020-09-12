@@ -75,13 +75,13 @@ Created when customer inserted item to cart
 - WAITING_PAYMENT
 Updated when customer confirmed their payment in cart
 - WAITING_CONFIRMATION
-Updated when customer paid the transaction, it wil **trigger** action to send email to admin to confirm the payment and invoice to user
+Updated when customer paid the transaction, it will **trigger** action to send email to admin to confirm the payment and invoice to user
 - REJECTED
 Updated when admin rejected the transaction
 - WAITING_DELIVERY
-Updated when admin accepted the transaction, it wil **trigger** action to send email to merchant to confirm and deliver the item request
+Updated when admin accepted the transaction, it will **trigger** action to send email to merchant to confirm and deliver the item request
 - ACCEPTED
-Updated when merchant accept the request, it wil **trigger** action to send email to user about the item has been arrived
+Updated when merchant accept the request, it will **trigger** action to send email to user about the item has been arrived
 
 
 ## Entity Relationship Diagram
