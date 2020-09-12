@@ -18,9 +18,11 @@ type TransactionController struct {
 func NewTransactionController(e *echo.Echo, t transaction.TransactionUsecase) transaction.TransactionController {
 	c := &TransactionController{usecase: t}
 	e.POST("/api/transaction", c.CreateTransaction)
-	e.PUT("/api/transaction/status", c.UpdateTransactionStatus)
+	e.POST("/api/transaction/status", c.UpdateTransactionStatus)
 	e.GET("/api/transaction", c.GetTransactionById)
 	e.GET("/api/transactions/history", c.GetTransactionHistory)
+	e.GET("/api/transactions/request", c.GetMerchantRequestItem)
+	e.POST("/api/transaction/payment", c.PayTransaction)
 	return c
 }
 
@@ -93,5 +95,41 @@ func (t *TransactionController) GetTransactionHistory(c echo.Context) error {
 		Data: domain.TransactionListDto{
 			Transactions: tr,
 		},
+	})
+}
+
+func (t *TransactionController) GetMerchantRequestItem(c echo.Context) error {
+	id := c.QueryParam("merchantId")
+	tr, err := t.usecase.GetMerchantRequestItem(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, response.GetTransactionHistoryResponse{
+		BaseResponse: base.BaseResponse{
+			Code:    http.StatusOK,
+			Message: message.SUCCESS,
+		},
+		Data: domain.TransactionListDto{
+			Transactions: tr,
+		},
+	})
+}
+
+func (t *TransactionController) PayTransaction(c echo.Context) error {
+	var request transaction2.PaymentRequest
+	c.Bind(&request)
+	err := t.usecase.PayTransaction(request)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, &base.BaseResponse{
+			Code:    http.StatusNotFound,
+			Message: message.NOT_FOUND,
+		})
+	}
+	return c.JSON(http.StatusOK, base.BaseResponse{
+		Code:    http.StatusOK,
+		Message: message.SUCCESS,
 	})
 }

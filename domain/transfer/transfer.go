@@ -24,6 +24,7 @@ type TransferUsecase interface {
 	CreateTransferHistory(request transfer.CreateTransferHistoryRequest) error
 }
 
+
 type TransferRepository interface {
 	GetTransferHistory(merchantId string) ([]Transfer, error)
 	CreateTransferHistory(Transfer) error

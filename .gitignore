@@ -1,4 +1,6 @@
 .idea
 docker-compose.yml
 /vendor
+docker-compose.yml
 .env
+cover.out

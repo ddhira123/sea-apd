@@ -18,19 +18,19 @@ var (
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
 	}
-	transactionStatus     = transaction_status.GetTransactionStatus()
 	mockTransactionEntity = domain.Transaction{
-		Status:     transactionStatus["ONPROGRESS"],
+		Status:     transaction_status.ToString(transaction_status.WAITING_PAYMENT),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		CustomerId: "1",
+		MerchantId: "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
-		TransactionId:     "1",
-		Status: "accepted",
+		TransactionId: "1",
+		Status:        transaction_status.WAITING_PAYMENT,
 	}
 	mockTransactionId = "1"
 )
@@ -98,7 +98,7 @@ func TestTransactionRepository_CreateTransaction(t *testing.T) {
 					VALUES (?,?,?,?,?,?,?,?) RETURNING "transactions"."id"
 					`)).WithArgs(
 					sqlmock.AnyArg(),
-					transactionStatus["onprogress"],
+					transaction_status.WAITING_PAYMENT,
 					"123456789",
 					"Mock name",
 					10,
@@ -193,7 +193,7 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 			name: "fail with invalid id",
 			args: args{
 				productId: "0",
-				status:    transactionStatus["Accepted"],
+				status:    transaction_status.ToString(transaction_status.ACCEPTED),
 			},
 			wantErr: true,
 			initMock: func() *gorm.DB {
@@ -202,7 +202,7 @@ func TestTransactionRepository_UpdateTransactionStatus(t *testing.T) {
 					SET "status" = $1
 					WHERE "transactions"."deleted_at" 
 						IS NULL AND ((id = 0))
-				`)).WithArgs(transactionStatus["Accepted"]).
+				`)).WithArgs(transaction_status.ToString(transaction_status.ACCEPTED)).
 					WillReturnError(errors.New("No data found"))
 				return db
 			},
@@ -241,7 +241,7 @@ func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
 			args: args{
 				productId: "0",
 				requiredStatus: []string{
-					transactionStatus["failed"],
+					transaction_status.ToString(transaction_status.OTHER),
 				},
 			},
 			wantErr: true,
@@ -251,7 +251,7 @@ func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
 					SET "status" = $1
 					WHERE "transactions"."deleted_at" 
 						IS NULL AND ((id = 0))
-				`)).WithArgs(transactionStatus["Accepted"]).
+				`)).WithArgs(transaction_status.ToString(transaction_status.ACCEPTED)).
 					WillReturnError(errors.New("No data found"))
 				return db
 			},
@@ -266,6 +266,105 @@ func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
 			_, err := pr.GetTransactionByRequiredStatus(tt.args.requiredStatus, tt.args.productId)
 			if err != nil && !tt.wantErr {
 				t.Errorf("TransactionRepository.GetTransactionByRequiredStatus() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionRepository_GetMerchantRequestItem(t *testing.T) {
+	db, _ := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		merchantId     string
+		requiredStatus []string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				merchantId: "",
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				merchantId: "1",
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := TransactionRepository{
+				db: tt.initMock(),
+			}
+			_, err := pr.GetMerchantRequestItem(tt.args.merchantId)
+			if err != nil && !tt.wantErr {
+				t.Errorf("TransactionRepository.GetMerchantRequestItem() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionRepository_UpdateTransaction(t *testing.T) {
+	db, _ := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		transaction domain.Transaction
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				transaction: domain.Transaction{},
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				transaction: domain.Transaction{
+					Amount: 123,
+				},
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := TransactionRepository{
+				db: tt.initMock(),
+			}
+			err := pr.UpdateTransaction(tt.args.transaction)
+			if err != nil && !tt.wantErr {
+				t.Errorf("TransactionRepository.UpdateTransaction() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})

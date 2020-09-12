@@ -4,11 +4,17 @@ import (
 	"errors"
 	"github.com/golang/mock/gomock"
 	"github.com/williamchang80/sea-apd/domain/product"
+	"github.com/williamchang80/sea-apd/domain/transaction"
 	product2 "github.com/williamchang80/sea-apd/dto/request/product"
+	"reflect"
 )
 
-var emptyProduct = product.Product{}
-var emptyProductRequest = product2.ProductRequest{}
+var (
+	emptyProduct        = product.Product{}
+	emptyProductRequest = product2.ProductRequest{}
+	emptyProductSlice   = []product.Product{}
+	emptyTransaction    = transaction.Transaction{}
+)
 
 type MockUsecase struct {
 	ctrl *gomock.Controller
@@ -55,5 +61,12 @@ func (m MockUsecase) GetProductsByMerchant(merchantId string) ([]product.Product
 	if len(merchantId) == 0 {
 		return nil, errors.New("Cannot Get Products by Merchant")
 	}
-	return []product.Product{}, nil
+	return emptyProductSlice, nil
+}
+
+func (m MockUsecase) GetProductPriceTotal(transaction transaction.Transaction) (int, error) {
+	if reflect.DeepEqual(transaction, emptyTransaction) {
+		return 0, errors.New("Cannot get product price total")
+	}
+	return 1000, nil
 }
