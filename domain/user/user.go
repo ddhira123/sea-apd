@@ -1,4 +1,3 @@
-// @Success 200 {array} domain.User
 package user
 
 import (
