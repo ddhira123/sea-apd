@@ -12,6 +12,10 @@ type MockRepository struct {
 	ctrl *gomock.Controller
 }
 
+var (
+	emptyMerchant = merch.Merchant{}
+)
+
 func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 	mock := &MockRepository{
 		ctrl: ctrl,
@@ -36,9 +40,9 @@ func (m MockRepository) GetMerchantBalance(merchantId string) (int, error) {
 func (m MockRepository) RegisterMerchant(merchant merchant.Merchant) (*merch.Merchant, error) {
 	var mh = merch.Merchant{}
 	if merchant == mh {
-		return nil,errors.New("Cannot Register Merchant")
+		return nil, errors.New("Cannot Register Merchant")
 	}
-	return &merch.Merchant{},nil
+	return &merch.Merchant{}, nil
 }
 
 func (m MockRepository) GetMerchants() ([]merchant.Merchant, error) {
@@ -61,9 +65,15 @@ func (m MockRepository) GetMerchantsByUser(userId string) ([]merchant.Merchant, 
 }
 
 func (m MockRepository) UpdateMerchantApprovalStatus(merchantId string, status string) error {
-	panic("implement me")
+	if len(merchantId) == 0 || len(status) == 0 {
+		return errors.New("Merchant status cannot be updated")
+	}
+	return nil
 }
 
 func (m MockRepository) UpdateMerchant(merchantId string, merchant merch.Merchant) error {
-	panic("implement me")
+	if len(merchantId) == 0 || merchant == emptyMerchant {
+		return errors.New("Cannot update merchant")
+	}
+	return nil
 }

@@ -19,11 +19,11 @@ func NewAuthUsecase(repository user.UserRepository) auth2.AuthUsecase {
 func (a AuthUsecase) Login(request request.LoginRequest) (string, error) {
 	user, err := a.repo.GetUserByEmail(request.Email)
 	if err != nil || !auth.IsMatchedPassword(user.Password, request.Password) {
-		return "", errors.New("Password and email not matched")
+		return "", errors.New("password and email not matched")
 	}
 	token, err := auth.GenerateToken(user)
 	if err != nil {
-		return "", errors.New("Password and email not matched")
+		return "", errors.New("password and email not matched")
 	}
 	return token, nil
 }

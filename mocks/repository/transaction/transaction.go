@@ -18,11 +18,22 @@ var (
 		CustomerId: "",
 		MerchantId: "",
 	}
+	mockTransaction = transaction.Transaction{
+		Base:       domain.Base{},
+		Status:     "123",
+		BankNumber: "123",
+		BankName:   "123",
+		Amount:     10,
+		CustomerId: "1",
+		MerchantId: "1",
+	}
+	mockTransactionSlice = []transaction.Transaction{}
 )
 
 type MockRepository struct {
 	ctrl *gomock.Controller
 }
+
 func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 	mock := &MockRepository{
 		ctrl: ctrl,
@@ -41,14 +52,14 @@ func (m MockRepository) GetTransactionById(id string) (*transaction.Transaction,
 	if len(id) == 0 {
 		return nil, errors.New("Id cannot be empty")
 	}
-	return &emptyTransaction, nil
+	return &mockTransaction, nil
 }
 
 func (m MockRepository) UpdateTransactionStatus(status string, id string) (*transaction.Transaction, error) {
 	if len(status) == 0 || len(id) == 0 {
 		return nil, errors.New("Cannot Update with empty object")
 	}
-	return &emptyTransaction, nil
+	return &mockTransaction, nil
 }
 
 func (m MockRepository) GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]transaction.Transaction, error) {
@@ -59,9 +70,15 @@ func (m MockRepository) GetTransactionByRequiredStatus(requiredStatus []string, 
 }
 
 func (m MockRepository) GetMerchantRequestItem(merchantId string) ([]transaction.Transaction, error) {
-	panic("implement me")
+	if len(merchantId) == 0 {
+		return nil, errors.New("cannot get merchant request item")
+	}
+	return mockTransactionSlice, nil
 }
 
 func (m MockRepository) UpdateTransaction(transaction transaction.Transaction) error {
-	panic("implement me")
+	if reflect.DeepEqual(transaction, emptyTransaction) {
+		return errors.New("Cannot update transaction")
+	}
+	return nil
 }

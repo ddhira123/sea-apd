@@ -7,14 +7,16 @@ import (
 	"github.com/williamchang80/sea-apd/dto/request/transaction"
 )
 
-var emptyTransactionRequest = transaction.TransactionRequest{}
-var emptyUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{}
+var (
+	emptyTransactionRequest             = transaction.TransactionRequest{}
+	emptyUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{}
+	mockTransactionSlice                = []domain.Transaction{}
+	mockPaymentRequest                  = transaction.PaymentRequest{}
+)
 
 type MockUsecase struct {
 	ctrl *gomock.Controller
 }
-
-
 
 func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 	return &MockUsecase{
@@ -45,15 +47,21 @@ func (m MockUsecase) GetTransactionById(id string) (*domain.Transaction, error) 
 
 func (m MockUsecase) GetTransactionHistory(userId string) ([]domain.Transaction, error) {
 	if len(userId) != 0 {
-		return []domain.Transaction{}, nil
+		return mockTransactionSlice, nil
 	}
 	return nil, errors.New("User Id cannot be empty")
 }
 
 func (m MockUsecase) GetMerchantRequestItem(merchantId string) ([]domain.Transaction, error) {
-	panic("implement me")
+	if len(merchantId) == 0 {
+		return nil, errors.New("cannot get merchant request item")
+	}
+	return mockTransactionSlice, nil
 }
 
 func (m MockUsecase) PayTransaction(request transaction.PaymentRequest) error {
-	panic("implement me")
+	if request == mockPaymentRequest {
+		return errors.New("cannot pay transaction")
+	}
+	return nil
 }

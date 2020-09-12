@@ -3,13 +3,17 @@ package transaction
 import (
 	"github.com/golang/mock/gomock"
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
+	"github.com/williamchang80/sea-apd/common/mailer"
 	merchant3 "github.com/williamchang80/sea-apd/domain/merchant"
 	product2 "github.com/williamchang80/sea-apd/domain/product"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
+	merchant4 "github.com/williamchang80/sea-apd/mocks/repository/merchant"
 	transaction2 "github.com/williamchang80/sea-apd/mocks/repository/transaction"
 	"github.com/williamchang80/sea-apd/mocks/usecase/merchant"
 	"github.com/williamchang80/sea-apd/mocks/usecase/product"
+	"github.com/williamchang80/sea-apd/mocks/usecase/user"
+	merchant2 "github.com/williamchang80/sea-apd/usecase/merchant"
 	"reflect"
 	"testing"
 )
@@ -22,13 +26,36 @@ var (
 		CustomerId: "1",
 		MerchantId: "1",
 	}
-	mockTransactionEntity = transaction.Transaction{
+	mockConfirmationTransactionEntity = transaction.Transaction{
 		Status:     transaction_status.ToString(transaction_status.WAITING_CONFIRMATION),
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
 		CustomerId: "1",
 		MerchantId: "1",
+	}
+	mockAcceptedTransactionEntity = transaction.Transaction{
+		Status:     transaction_status.ToString(transaction_status.ACCEPTED),
+		BankNumber: "123456789",
+		BankName:   "Mock Bank",
+		Amount:     10000,
+		CustomerId: "1",
+		MerchantId: "1",
+	}
+	mockDeliveryTransactionEntity = transaction.Transaction{
+		Status:     transaction_status.ToString(transaction_status.WAITING_DELIVERY),
+		BankNumber: "123456789",
+		BankName:   "Mock Bank",
+		Amount:     10000,
+		CustomerId: "1",
+		MerchantId: "1",
+	}
+
+	mockPaymentRequest = request.PaymentRequest{
+		CustomerId:    "1",
+		BankNumber:    "123",
+		BankName:      "123",
+		TransactionId: "1",
 	}
 	mockUpdateTransaction = request.UpdateTransactionRequest{
 		TransactionId: "1",
@@ -59,9 +86,9 @@ func TestNewTransactionUsecase(t *testing.T) {
 				productUsecase: product.NewMockUsecase(ctrl),
 			},
 			want: &TransactionUsecase{
-				tr: nil,
+				tr:              nil,
 				merchantUseCase: merchant.NewMockUsecase(ctrl),
-				productUseCase: product.NewMockUsecase(ctrl),
+				productUseCase:  product.NewMockUsecase(ctrl),
 			},
 		},
 	}
@@ -89,7 +116,7 @@ func TestConvertToDomain(t *testing.T) {
 			args: args{
 				productRequest: mockCreateTransactionRequest,
 			},
-			want: mockTransactionEntity,
+			want: mockConfirmationTransactionEntity,
 		},
 	}
 
@@ -225,7 +252,7 @@ func TestTransactionUsecase_GetTransactionById(t *testing.T) {
 				request: mockTransactionId,
 			},
 			wantErr: false,
-			want:    mockTransactionEntity,
+			want:    mockAcceptedTransactionEntity,
 			initMock: func() transaction.TransactionUsecase {
 				t := transaction2.NewMockRepository(ctrl)
 				u := merchant.NewMockUsecase(ctrl)
@@ -309,3 +336,153 @@ func TestTransactionUsecase_GetTransactionHistory(t *testing.T) {
 		})
 	}
 }
+
+func TestTransactionUsecase_GetMerchantRequestItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	type args struct {
+		merchantId string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		want     []transaction.Transaction
+		initMock func() transaction.TransactionUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				merchantId: mockUserId,
+			},
+			wantErr: false,
+			want:    []transaction.Transaction{},
+			initMock: func() transaction.TransactionUsecase {
+				t := transaction2.NewMockRepository(ctrl)
+				u := merchant.NewMockUsecase(ctrl)
+				p := product.NewMockUsecase(ctrl)
+				return NewTransactionUsecase(t, u, p)
+			},
+		},
+		{
+			name: "failed with unmatched status",
+			args: args{
+				merchantId: "",
+			},
+			wantErr: true,
+			initMock: func() transaction.TransactionUsecase {
+				t := transaction2.NewMockRepository(ctrl)
+				u := merchant.NewMockUsecase(ctrl)
+				p := product.NewMockUsecase(ctrl)
+				return NewTransactionUsecase(t, u, p)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.initMock()
+			if p, err := c.GetMerchantRequestItem(tt.args.merchantId);
+				(err != nil || reflect.DeepEqual(p, tt.args)) && !tt.wantErr {
+				t.Errorf("TransactionUsecase.GetMerchantRequestItem() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionUsecase_PayTransaction(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	type args struct {
+		request request.PaymentRequest
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		want     []transaction.Transaction
+		initMock func() transaction.TransactionUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				request: mockPaymentRequest,
+			},
+			wantErr: true,
+			want:    []transaction.Transaction{},
+			initMock: func() transaction.TransactionUsecase {
+				t := transaction2.NewMockRepository(ctrl)
+				u := merchant.NewMockUsecase(ctrl)
+				p := product.NewMockUsecase(ctrl)
+				return NewTransactionUsecase(t, u, p)
+			},
+		},
+		{
+			name: "failed with unmatched status",
+			args: args{
+				request: request.PaymentRequest{},
+			},
+			wantErr: true,
+			initMock: func() transaction.TransactionUsecase {
+				t := transaction2.NewMockRepository(ctrl)
+				u := merchant.NewMockUsecase(ctrl)
+				p := product.NewMockUsecase(ctrl)
+				return NewTransactionUsecase(t, u, p)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.initMock()
+			if err := c.PayTransaction(tt.args.request);
+				err != nil && !tt.wantErr {
+				t.Errorf("TransactionUsecase.PayTransaction() error = %v, "+
+					"wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestNotifyAdminObserver_Update(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mailer.InitMail()
+	defer ctrl.Finish()
+	type args struct {
+		transaction transaction.Transaction
+		status      transaction_status.TransactionStatus
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() merchant3.MerchantUsecase
+	}{
+		{
+			name: "success",
+			args: args{
+				transaction: mockConfirmationTransactionEntity,
+				status:      transaction_status.WAITING_CONFIRMATION,
+			},
+			initMock: func() merchant3.MerchantUsecase {
+				repo := merchant4.NewMockRepository(ctrl)
+				usecase := user.NewMockUsecase(ctrl)
+				return merchant2.NewMerchantUsecase(repo, usecase)
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			obs := NotifyAdminObserver{}
+			mock := tt.initMock()
+			if err := obs.Update(tt.args.transaction, mock);
+				err != nil && !tt.wantErr {
+				t.Errorf("NotifyAdminObserver.Update() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+

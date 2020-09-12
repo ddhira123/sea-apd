@@ -13,6 +13,7 @@ import (
 var mail factory.MailFactory
 
 type UpdateMerchantBalanceObserver struct {
+
 }
 
 func (u *UpdateMerchantBalanceObserver) Update(transaction transaction.Transaction,
