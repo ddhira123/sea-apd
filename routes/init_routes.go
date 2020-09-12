@@ -20,6 +20,7 @@ type Routes struct {
 
 func InitMainRoutes(echo *echo.Echo) {
 	NewUserRoute(echo)
+	NewAdminRoutes(echo)
 	NewMerchantRoute(echo)
 	NewProductRoutes(echo)
 	NewTransactionRoute(echo)
