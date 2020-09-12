@@ -18,7 +18,7 @@ var (
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		CustomerId:     "1",
+		CustomerId: "1",
 	}
 	mockTransactionEntity = domain.Transaction{
 		Status:     transaction_status.ToString(transaction_status.WAITING_PAYMENT),
@@ -266,6 +266,105 @@ func TestTransactionRepository_GetTransactionByRequiredStatus(t *testing.T) {
 			_, err := pr.GetTransactionByRequiredStatus(tt.args.requiredStatus, tt.args.productId)
 			if err != nil && !tt.wantErr {
 				t.Errorf("TransactionRepository.GetTransactionByRequiredStatus() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionRepository_GetMerchantRequestItem(t *testing.T) {
+	db, _ := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		merchantId     string
+		requiredStatus []string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				merchantId: "",
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				merchantId: "1",
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := TransactionRepository{
+				db: tt.initMock(),
+			}
+			_, err := pr.GetMerchantRequestItem(tt.args.merchantId)
+			if err != nil && !tt.wantErr {
+				t.Errorf("TransactionRepository.GetMerchantRequestItem() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
+	}
+}
+
+func TestTransactionRepository_UpdateTransaction(t *testing.T) {
+	db, _ := mock_psql.Connection()
+	defer db.Close()
+	type args struct {
+		transaction domain.Transaction
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		initMock func() *gorm.DB
+	}{
+		{
+			name: "fail with invalid id",
+			args: args{
+				transaction: domain.Transaction{},
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				transaction: domain.Transaction{
+					Amount: 123,
+				},
+			},
+			wantErr: true,
+			initMock: func() *gorm.DB {
+				return db
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pr := TransactionRepository{
+				db: tt.initMock(),
+			}
+			err := pr.UpdateTransaction(tt.args.transaction)
+			if err != nil && !tt.wantErr {
+				t.Errorf("TransactionRepository.UpdateTransaction() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
