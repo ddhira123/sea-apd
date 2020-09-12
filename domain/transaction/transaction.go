@@ -4,15 +4,27 @@ import (
 	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/domain"
 	"github.com/williamchang80/sea-apd/dto/request/transaction"
+	"time"
 )
 
 type Transaction struct {
 	domain.Base
-	Status     string `json:"status"`
 	BankNumber string `json:"bank_number"`
 	BankName   string `json:"bank_name"`
 	Amount     int    `json:"amount"`
-	UserId     string `json:"user_id"`
+	CustomerId string `json:"customer_id"`
+	Status     string `json:"status"`
+	MerchantId string `json:"merchant_id"`
+	ProductDetails []ProductTransaction `json:"product_details" gorm:"many2many:product_transactions;
+								      AssociationForeignKey:TransactionId"`
+}
+
+type ProductTransaction struct {
+	ProductId     string    `json:"product_id"`
+	TransactionId string    `json:"transaction_id"`
+	Quantity      int       `json:"quantity"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 type TransactionUsecase interface {
@@ -20,6 +32,8 @@ type TransactionUsecase interface {
 	GetTransactionById(id string) (*Transaction, error)
 	UpdateTransactionStatus(transaction.UpdateTransactionRequest) error
 	GetTransactionHistory(userId string) ([]Transaction, error)
+	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
+	PayTransaction(request transaction.PaymentRequest) error
 }
 
 type TransactionController interface {
@@ -27,6 +41,8 @@ type TransactionController interface {
 	GetTransactionById(echo.Context) error
 	UpdateTransactionStatus(echo.Context) error
 	GetTransactionHistory(echo.Context) error
+	GetMerchantRequestItem(echo.Context) error
+	PayTransaction(echo.Context) error
 }
 
 type TransactionRepository interface {
@@ -34,4 +50,6 @@ type TransactionRepository interface {
 	GetTransactionById(string) (*Transaction, error)
 	UpdateTransactionStatus(status string, id string) (*Transaction, error)
 	GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]Transaction, error)
+	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
+	UpdateTransaction(transaction Transaction) error
 }

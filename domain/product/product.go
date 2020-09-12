@@ -3,6 +3,7 @@ package product
 import (
 	"github.com/labstack/echo"
 	"github.com/williamchang80/sea-apd/domain"
+	"github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/dto/request/product"
 )
 
@@ -12,6 +13,7 @@ type Product struct {
 	Description string `json:"description"`
 	Price       int    `json:"price"`
 	Image       string `json:"image"`
+	Amount      int    `json:"amount"`
 	Stock       int    `json:"stock"`
 	MerchantId  string `json:"merchant_id"`
 }
@@ -23,6 +25,7 @@ type ProductUsecase interface {
 	UpdateProduct(productId string, productRequest product.ProductRequest) error
 	DeleteProduct(productId string) error
 	GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductPriceTotal(transaction transaction.Transaction) (int, error)
 }
 
 type ProductRepository interface {
@@ -32,6 +35,7 @@ type ProductRepository interface {
 	UpdateProduct(productId string, product Product) error
 	DeleteProduct(productId string) error
 	GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductPriceSumByTransactionId(transactionId string) int
 }
 
 type ProductController interface {

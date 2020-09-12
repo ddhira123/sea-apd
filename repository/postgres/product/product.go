@@ -32,7 +32,7 @@ func (p *ProductRepository) GetProductById(productId string) (*product.Product, 
 }
 
 func (p *ProductRepository) CreateProduct(product product.Product) error {
-	if err := p.db.Debug().Create(&product).Error; err != nil {
+	if err := p.db.Create(&product).Error; err != nil {
 		return err
 	}
 	return nil
@@ -59,4 +59,13 @@ func (p *ProductRepository) GetProductsByMerchant(merchantId string) ([]product.
 		return nil, err
 	}
 	return products, nil
+}
+
+func (p *ProductRepository) GetProductPriceSumByTransactionId(transactionId string) int {
+	var sum int
+	p.db.Raw(`SELECT SUM(product_transactions.quantity * price)
+	FROM products
+	JOIN product_transactions ON "product_transactions".product_id = products.id
+	WHERE product_transactions.transaction_id = ?`, transactionId).Row().Scan(&sum)
+	return sum
 }

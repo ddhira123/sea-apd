@@ -9,3 +9,13 @@ type GetMerchantBalanceResponse struct {
 	base.BaseResponse
 	Data domain.MerchantBalanceDto `json:"data"`
 }
+
+type GetMerchantByIdResponse struct {
+	base.BaseResponse
+	Data domain.MerchantDto `json:"data"`
+}
+
+type GetMerchantsResponse struct {
+	base.BaseResponse
+	Data domain.MerchantListDto `json:"data"`
+}

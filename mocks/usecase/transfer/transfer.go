@@ -12,7 +12,7 @@ type MockUsecase struct {
 }
 
 var (
-	emptyCreateTransferHistorysRequest = request.CreateTransferHistoryRequest{}
+	emptyCreateTransferHistoryRequest = request.CreateTransferHistoryRequest{}
 )
 
 func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
@@ -29,7 +29,7 @@ func (m MockUsecase) GetTransferHistory(merchantId string) ([]transfer.Transfer,
 }
 
 func (m MockUsecase) CreateTransferHistory(request request.CreateTransferHistoryRequest) error {
-	if request == emptyCreateTransferHistorysRequest{
+	if request == emptyCreateTransferHistoryRequest{
 		return errors.New("request cannot be empty")
 	}
 	return nil

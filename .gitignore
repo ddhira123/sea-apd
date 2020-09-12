@@ -1,3 +1,5 @@
 .idea
 /vendor
+docker-compose.yml
 .env
+cover.out

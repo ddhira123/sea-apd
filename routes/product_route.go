@@ -10,9 +10,9 @@ import (
 )
 
 type ProductRoute struct {
-	controller domain.ProductController
-	usecase    domain.ProductUsecase
-	repository domain.ProductRepository
+	Controller domain.ProductController
+	Usecase    domain.ProductUsecase
+	Repository domain.ProductRepository
 }
 
 func NewProductRoutes(e *echo.Echo) ProductRoute {
@@ -25,8 +25,8 @@ func NewProductRoutes(e *echo.Echo) ProductRoute {
 	usecase := use_case.NewProductUseCase(repo)
 	controller := product.NewProductController(e, usecase)
 	return ProductRoute{
-		controller: controller,
-		usecase:    usecase,
-		repository: repo,
+		Controller: controller,
+		Usecase:    usecase,
+		Repository: repo,
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/labstack/echo"
 	message "github.com/williamchang80/sea-apd/common/constants/response"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	domain "github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/dto/request/transaction"
 	request "github.com/williamchang80/sea-apd/dto/request/transaction"
@@ -23,15 +24,22 @@ import (
 var (
 	mockUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{
 		TransactionId: "1",
-		Status:        "accepted",
+		Status:        transaction_status.ACCEPTED,
 	}
 	mockCreateTransactionRequest = transaction.TransactionRequest{
 		BankNumber: "123456789",
 		BankName:   "Mock Bank",
 		Amount:     10000,
-		UserId:     "1",
+		MerchantId: "1",
+		CustomerId: "1",
 	}
-	mockId = "1"
+	mockId             = "1"
+	mockPaymentRequest = request.PaymentRequest{
+		CustomerId:    "1",
+		BankNumber:    "number",
+		BankName:      "name",
+		TransactionId: "2",
+	}
 )
 
 func TestNewTransactionController(t *testing.T) {
@@ -54,7 +62,7 @@ func TestNewTransactionController(t *testing.T) {
 				ctx: ctx,
 			},
 			want: &TransactionController{
-				usecase: transaction_usecase.NewTransactionUsecase(repo, nil),
+				usecase: transaction_usecase.NewTransactionUsecase(repo, nil, nil),
 			},
 			initMock: func() domain.TransactionUsecase {
 				return transaction_mock_usecase.NewMockUsecase(ctrl)
@@ -328,6 +336,137 @@ func TestTransactionController_GetTransactionHistory(t *testing.T) {
 			controller := NewTransactionController(c, mock)
 			if controller.GetTransactionHistory(ctx); (rec.Code != tt.wantStatus) || tt.wantErr {
 				t.Errorf("GetTransactionHistory() error= %v, want %v", rec.Code, tt.wantStatus)
+			}
+		})
+	}
+}
+
+func TestTransactionController_GetMerchantRequestItem(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	type args struct {
+		ctx       *echo.Echo
+		getParams func() url.Values
+	}
+	defer ctrl.Finish()
+	tests := []struct {
+		name       string
+		args       args
+		wantErr    bool
+		wantStatus int
+		initMock   func() domain.TransactionUsecase
+	}{
+		{
+			name: "failed with empty request and invalid status",
+			args: args{
+				ctx: echo.New(),
+				getParams: func() url.Values {
+					q := make(url.Values)
+					return q
+				},
+			},
+			wantErr:    false,
+			wantStatus: http.StatusNotFound,
+			initMock: func() domain.TransactionUsecase {
+				return transaction_mock_usecase.NewMockUsecase(ctrl)
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				ctx: echo.New(),
+				getParams: func() url.Values {
+					q := make(url.Values)
+					q.Set("merchantId", mockId)
+					return q
+				},
+			},
+			wantErr:    false,
+			wantStatus: http.StatusOK,
+			initMock: func() domain.TransactionUsecase {
+				return transaction_mock_usecase.NewMockUsecase(ctrl)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := tt.initMock()
+			params := tt.args.getParams()
+			c := echo.New()
+			req, err := http.NewRequest(echo.GET, "api/transactions/request"+"?"+params.Encode(), nil)
+			if err != nil && !tt.wantErr {
+				t.Errorf("GetMerchantRequestItem() request error= %v", tt.wantErr)
+			}
+			rec := httptest.NewRecorder()
+			ctx := c.NewContext(req, rec)
+			controller := NewTransactionController(c, mock)
+			if controller.GetMerchantRequestItem(ctx); (rec.Code != tt.wantStatus) || tt.wantErr {
+				t.Errorf("GetMerchantRequestItem() error= %v, want %v", rec.Code, tt.wantStatus)
+			}
+		})
+	}
+}
+
+func TestTransactionController_PayTransaction(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	type args struct {
+		ctx     *echo.Echo
+		request request.PaymentRequest
+	}
+	defer ctrl.Finish()
+	tests := []struct {
+		name     string
+		args     args
+		wantErr  bool
+		want     base.BaseResponse
+		initMock func() domain.TransactionUsecase
+	}{
+		{
+			name: "failed with empty request and invalid status",
+			args: args{
+				ctx:     echo.New(),
+				request: request.PaymentRequest{},
+			},
+			wantErr: false,
+			want: base.BaseResponse{
+				Code:    http.StatusNotFound,
+				Message: message.NOT_FOUND,
+			},
+			initMock: func() domain.TransactionUsecase {
+				return transaction_mock_usecase.NewMockUsecase(ctrl)
+			},
+		},
+		{
+			name: "success",
+			args: args{
+				ctx:     echo.New(),
+				request: mockPaymentRequest,
+			},
+			wantErr: false,
+			want: base.BaseResponse{
+				Code:    http.StatusOK,
+				Message: message.SUCCESS,
+			},
+			initMock: func() domain.TransactionUsecase {
+				return transaction_mock_usecase.NewMockUsecase(ctrl)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := tt.initMock()
+			c := echo.New()
+			s, _ := json.Marshal(tt.args.request)
+			req, err := http.NewRequest(echo.POST, "api/transaction/payment",
+				strings.NewReader(string(s)))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			if err != nil && !tt.wantErr {
+				t.Errorf("PayTransaction() request error= %v", tt.wantErr)
+			}
+			rec := httptest.NewRecorder()
+			ctx := c.NewContext(req, rec)
+			controller := NewTransactionController(c, mock)
+			if controller.PayTransaction(ctx); (rec.Code != tt.want.Code) || tt.wantErr {
+				t.Errorf("PayTransaction() error= %v, want %v", rec.Code, tt.want.Code)
 			}
 		})
 	}
