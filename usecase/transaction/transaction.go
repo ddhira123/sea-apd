@@ -26,7 +26,7 @@ func NewTransactionUsecase(repo transaction.TransactionRepository,
 	merchantUseCase merchant.MerchantUsecase, productUsecase product.
 ProductUsecase) transaction.TransactionUsecase {
 	obs = CreateObserverable()
-	obs.AttachObservers()
+	obs.attachObservers()
 	return &TransactionUsecase{tr: repo,
 		merchantUseCase: merchantUseCase,
 		productUseCase:  productUsecase}
@@ -49,7 +49,7 @@ func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRe
 	return err
 }
 
-func (i *TransactionObserver) AttachObservers() {
+func (i *TransactionObserver) attachObservers() {
 	i.TransactionObservable.AddObserver(&UpdateMerchantBalanceObserver{})
 	i.TransactionObservable.AddObserver(&NotifyAdminObserver{})
 }

@@ -30,9 +30,6 @@ func convertRegisterRequestToUserDomain(request auth.RegisterUserRequest) user.U
 }
 
 func (u UserUsecase) CreateUser(request auth.RegisterUserRequest) error {
-	if request.Password != request.PasswordConfirmation {
-		return errors.New("password and confirmation password must be same")
-	}
 	user := convertRegisterRequestToUserDomain(request)
 	if err := u.repo.CreateUser(user); err != nil {
 		return errors.New("email must be unique")
@@ -67,7 +64,6 @@ func (u UserUsecase) UpdateUser(request user2.UpdateUserRequest) error {
 	if us.Email != request.OldEmail || err != nil {
 		return errors.New("credential doesnt match")
 	}
-
 	user := getUpdatedUserLoginInformation(request, us.ID)
 	if err := u.repo.UpdateUser(user); err != nil {
 		return err

@@ -21,18 +21,18 @@ type Mail struct {
 	Body      string
 }
 
-var Mailer *mailgun.MailgunImpl
+var mailer *mailgun.MailgunImpl
 
 func InitMail() {
 	API_KEY := os.Getenv("API_KEY")
 	DOMAIN_NAME := os.Getenv("DOMAIN_NAME")
-	if Mailer == nil {
-		Mailer = mailgun.NewMailgun(DOMAIN_NAME, API_KEY)
+	if mailer == nil {
+		mailer = mailgun.NewMailgun(DOMAIN_NAME, API_KEY)
 	}
 }
 
 func CreateMailer(mail Mail) *mailgun.Message {
-	m := Mailer.NewMessage(mail.Sender, mail.Subject, mail.Body, mail.Recipient)
+	m := mailer.NewMessage(mail.Sender, mail.Subject, mail.Body, mail.Recipient)
 	return m
 }
 
@@ -41,7 +41,7 @@ func SendEmail(mails []Mail) error {
 	defer cancel()
 	for _, mail := range mails {
 		message := CreateMailer(mail)
-		Mailer.Send(ctx, message)
+		mailer.Send(ctx, message)
 		log.Info(fmt.Sprintf("Mail sent from %v to %v !", mail.Sender, mail.Recipient))
 	}
 	return nil

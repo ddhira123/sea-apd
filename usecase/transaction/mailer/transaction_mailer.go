@@ -26,8 +26,8 @@ func (t *TransactionMailer) CreateMail(tr ...interface{}) []mailer.Mail {
 	return nil
 }
 
-func CreateInvoiceAndNotificationMailer(transaction transaction.Transaction, customerEmail string,
-	merchantEmail string) []mailer.Mail {
+func CreateInvoiceAndNotificationMailer(transaction transaction.Transaction,
+	customerEmail string, merchantEmail string) []mailer.Mail {
 	invoiceMailer := mailer.Mail{
 		Sender:    mailer.MailSender,
 		Subject:   fmt.Sprintf("Invoice for transaction id %v", transaction.ID),
