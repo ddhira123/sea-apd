@@ -35,6 +35,7 @@ type ProductRepository interface {
 	UpdateProduct(productId string, product Product) error
 	DeleteProduct(productId string) error
 	GetProductsByMerchant(merchantId string) ([]Product, error)
+	GetProductPriceSumByTransactionId(transactionId string) int
 }
 
 type ProductController interface {
