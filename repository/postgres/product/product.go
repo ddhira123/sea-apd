@@ -60,3 +60,12 @@ func (p *ProductRepository) GetProductsByMerchant(merchantId string) ([]product.
 	}
 	return products, nil
 }
+
+func (p *ProductRepository) GetProductPriceSumByTransactionId(transactionId string) int {
+	var sum int
+	p.db.Raw(`SELECT SUM(product_transactions.quantity * price)
+	FROM products
+	JOIN product_transactions ON "product_transactions".product_id = products.id
+	WHERE product_transactions.transaction_id = ?`, transactionId).Row().Scan(&sum)
+	return sum
+}
