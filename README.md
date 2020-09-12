@@ -67,6 +67,7 @@ sea-apd/
 ### Notes
 - To build image just run `docker build -t <YOUR_IMAGE_TAGS>:<IMAGE_VERSION> .`
 - There are nginx dockerfile on infrastructure/nginx and you can also build nginx image with same command as step before but make sure to run the command in nginx directory
+- For testing in admin role, admin token is "adminToken"
 
 ## Transaction Flow
 ![erd](docs/flow.PNG)
