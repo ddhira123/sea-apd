@@ -131,7 +131,7 @@ func TestTransactionController_CreateTransaction(t *testing.T) {
 			mock := tt.initMock()
 			c := echo.New()
 			s, _ := json.Marshal(tt.args.request)
-			req, err := http.NewRequest(echo.POST, "api/transaction", strings.NewReader(string(s)))
+			req, err := http.NewRequest(echo.POST, "api/cart", strings.NewReader(string(s)))
 			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 			if err != nil {
 				t.Errorf("CreateTransaction() request error= %v", tt.wantErr)
@@ -139,7 +139,7 @@ func TestTransactionController_CreateTransaction(t *testing.T) {
 			rec := httptest.NewRecorder()
 			ctx := c.NewContext(req, rec)
 			controller := NewTransactionController(c, mock)
-			if got := controller.CreateTransaction(ctx); (got != nil) != tt.wantErr {
+			if got := controller.CreateCart(ctx); (got != nil) != tt.wantErr {
 				t.Errorf("CreateTransaction() error= %v, want %v", got, tt.wantErr)
 			}
 		})

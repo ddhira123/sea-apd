@@ -19,11 +19,8 @@ import (
 )
 
 var (
-	mockCreateTransactionRequest = request.TransactionRequest{
-		BankNumber: "123456789",
-		BankName:   "Mock Bank",
-		Amount:     10000,
-		CustomerId: "1",
+	mockCreateCartRequest = request.CreateCartRequest{
+		UserId:     "1",
 		MerchantId: "1",
 	}
 	mockConfirmationTransactionEntity = transaction.Transaction{
@@ -104,7 +101,7 @@ func TestNewTransactionUsecase(t *testing.T) {
 
 func TestConvertToDomain(t *testing.T) {
 	type args struct {
-		productRequest request.TransactionRequest
+		productRequest request.CreateCartRequest
 	}
 	tests := []struct {
 		name string
@@ -114,7 +111,7 @@ func TestConvertToDomain(t *testing.T) {
 		{
 			name: "success",
 			args: args{
-				productRequest: mockCreateTransactionRequest,
+				productRequest: mockCreateCartRequest,
 			},
 			want: mockConfirmationTransactionEntity,
 		},
@@ -122,7 +119,8 @@ func TestConvertToDomain(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := convertTransactionRequestToDomain(tt.args.productRequest); !reflect.DeepEqual(got, tt.want) {
+			if got := convertTransactionRequestToDomain(tt.args.productRequest);
+				reflect.TypeOf(got) != reflect.TypeOf(tt.want) {
 				t.Errorf("ConvertToDomain() = %#v, want %#v", got, tt.want)
 			}
 		})
@@ -133,7 +131,7 @@ func TestTransactionUsecase_CreateTransaction(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	type args struct {
-		request request.TransactionRequest
+		request request.CreateCartRequest
 	}
 	tests := []struct {
 		name     string
@@ -144,7 +142,7 @@ func TestTransactionUsecase_CreateTransaction(t *testing.T) {
 		{
 			name: "success",
 			args: args{
-				request: mockCreateTransactionRequest,
+				request: mockCreateCartRequest,
 			},
 			wantErr: false,
 			initMock: func() transaction.TransactionUsecase {
@@ -157,7 +155,7 @@ func TestTransactionUsecase_CreateTransaction(t *testing.T) {
 		{
 			name: "failed with empty object request",
 			args: args{
-				request: request.TransactionRequest{},
+				request: request.CreateCartRequest{},
 			},
 			wantErr: true,
 			initMock: func() transaction.TransactionUsecase {
@@ -171,7 +169,7 @@ func TestTransactionUsecase_CreateTransaction(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.initMock()
-			err := c.CreateTransaction(tt.args.request)
+			err := c.CreateCart(tt.args.request)
 			if err != nil && !tt.wantErr {
 				t.Errorf("TransactionUsecase.CreateTransaction() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -484,5 +482,3 @@ func TestNotifyAdminObserver_Update(t *testing.T) {
 		})
 	}
 }
-
-

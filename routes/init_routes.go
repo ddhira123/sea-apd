@@ -31,7 +31,7 @@ func InitMainRoutes(echo *echo.Echo) {
 	NewAuthRoute(echo)
 
 	mailer.InitMail()
-	//InitMiddleware(echo)
+	InitMiddleware(echo)
 	serveSwaggerUI()
 }
 

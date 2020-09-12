@@ -8,10 +8,11 @@ import (
 )
 
 var (
-	emptyTransactionRequest             = transaction.TransactionRequest{}
+	emptyCreateCartRequest              = transaction.CreateCartRequest{}
 	emptyUpdateTransactionStatusRequest = transaction.UpdateTransactionRequest{}
 	mockTransactionSlice                = []domain.Transaction{}
 	mockPaymentRequest                  = transaction.PaymentRequest{}
+	mockCartRequest                     = transaction.CartRequest{}
 )
 
 type MockUsecase struct {
@@ -24,8 +25,8 @@ func NewMockUsecase(repo *gomock.Controller) *MockUsecase {
 	}
 }
 
-func (m MockUsecase) CreateTransaction(request transaction.TransactionRequest) error {
-	if request == emptyTransactionRequest {
+func (m MockUsecase) CreateCart(request transaction.CreateCartRequest) error {
+	if request == emptyCreateCartRequest {
 		return errors.New("Request cannot be empty")
 	}
 	return nil
@@ -64,4 +65,32 @@ func (m MockUsecase) PayTransaction(request transaction.PaymentRequest) error {
 		return errors.New("cannot pay transaction")
 	}
 	return nil
+}
+
+func (m MockUsecase) AddCartItem(request transaction.CartRequest) error {
+	if request == mockCartRequest {
+		return errors.New("cannot add item to cart")
+	}
+	return nil
+}
+
+func (m MockUsecase) RemoveCartItem(request transaction.CartRequest) error {
+	if request == mockCartRequest {
+		return errors.New("cannot remove item from cart")
+	}
+	return nil
+}
+
+func (m MockUsecase) UpdateCartItem(request transaction.CartRequest) error {
+	if request == mockCartRequest {
+		return errors.New("cannot update item from cart")
+	}
+	return nil
+}
+
+func (m MockUsecase) GetCartItems(id string) ([]domain.ProductTransaction, error) {
+	if len(id) == 0 {
+		return nil, errors.New("cannot get items from cart")
+	}
+	return []domain.ProductTransaction{}, nil
 }

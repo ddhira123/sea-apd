@@ -65,7 +65,7 @@ func TestNewTransactionRepository(t *testing.T) {
 	}
 }
 
-func TestTransactionRepository_CreateTransaction(t *testing.T) {
+func TestTransactionRepository_CreateCart(t *testing.T) {
 	db, mocks := mock_psql.Connection()
 	defer db.Close()
 	type args struct {
@@ -115,9 +115,9 @@ func TestTransactionRepository_CreateTransaction(t *testing.T) {
 			pr := TransactionRepository{
 				db: tt.initMock(),
 			}
-			err := pr.CreateTransaction(tt.args.transaction)
+			err := pr.CreateCart(tt.args.transaction)
 			if err != nil && !tt.wantErr {
-				t.Errorf("ProductRepository.CreateProduct() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ProductRepository.CreateCart() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
