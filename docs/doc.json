@@ -29,8 +29,16 @@
       "description": "Transaction that indicate customer buying status"
     },
     {
+      "name": "admin",
+      "description": "Admin that decide the transaction and proposal should be accepted or not"
+    },
+    {
       "name": "transfer",
       "description": "Transfer that done by merchant from or to their bank account"
+    },
+    {
+      "name": "auth",
+      "description": "Handle authentication and authorization"
     }
   ],
   "paths": {
@@ -263,6 +271,39 @@
         }
       }
     },
+    "/merchant/products": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "type": "string",
+            "name": "merchantId",
+            "required": true
+          }
+        ],
+        "summary": "Get all products that sold by merchant",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getProductsResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
     "/transaction": {
       "post": {
         "tags": [
@@ -328,7 +369,7 @@
       }
     },
     "/transaction/status": {
-      "put": {
+      "post": {
         "tags": [
           "transaction"
         ],
@@ -339,6 +380,7 @@
         "parameters": [
           {
             "name": "request",
+            "description": "For status the values are: 0 on cart, 1 waiting payment, 2 waiting confirmation, 3 declined, 4 waiting delivery, 5 accepted",
             "in": "body",
             "schema": {
               "$ref": '#/definitions/updateTransactionRequest'
@@ -392,6 +434,138 @@
           }
         }
       }
+    },
+    "/transactions/request": {
+      "get": {
+        "tags": [
+          "transaction"
+        ],
+        "summary": "Get merchant request item list",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "merchantId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getTransactionHistoryResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
+    "/transaction/payment": {
+      "post": {
+        "tags": [
+          "transaction"
+        ],
+        "summary": "Pay for the transaction",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": '#/definitions/paymentRequest'
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/successResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
+    "/transfer": {
+      "post": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Transfer in or out to bank",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "schema": {
+              "$ref": '#/definitions/transferRequest'
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/successResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
+    },
+    "/transfers": {
+      "get": {
+        "tags": [
+          "transfer"
+        ],
+        "summary": "Transfer in or out from bank",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "merchantId",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": '#/definitions/getTransferResponse'
+            }
+          },
+          "404": {
+            "description": "Id is invalid",
+            "schema": {
+              "$ref": "#/definitions/notFoundResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -420,17 +594,63 @@
       "type": "object",
       "properties": {
         "transaction_id": {
+          "description": "asdasd",
           "type": "string",
           "example": "3efa0889-c74b-4498-9134-5733bfdbd8a7"
         },
         "status": {
-          "type": "string",
-          "example": "declined",
+          "type": integer,
+          "example": 1,
           "enum": [
-            "accepted",
-            "onprogress",
-            "declined"
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
           ]
+        }
+      }
+    },
+    "paymentRequest": {
+      "type": "object",
+      "properties": {
+        "customer_id": {
+          "type": "string",
+          "example": "3efa0889-c74b-4498-9134-5733bfdbd8a7"
+        },
+        "bank_number": {
+          "type": "string",
+          "example": "123"
+        },
+        "bank_name": {
+          "type": "string",
+          "example": "Bank name"
+        },
+        "transaction_id": {
+          "type": "string",
+          "example": "3efa0889-c74b-4498-9134-5733bfdbd8a7"
+        }
+      }
+    },
+    "transferRequest": {
+      "type": "object",
+      "properties": {
+        "merchant_id": {
+          "type": "string",
+          "example": "3efa0889-c74b-4498-9134-5733bfdbd8a7"
+        },
+        "bank_number": {
+          "type": "string",
+          "example": "123"
+        },
+        "bank_name": {
+          "type": "string",
+          "example": "Bank name"
+        },
+        "amount": {
+          "type": integer,
+          "example": -100000
         }
       }
     },
@@ -553,6 +773,25 @@
         }
       }
     },
+    "getTransferResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "example": 200
+        },
+        "message": {
+          "type": "string",
+          "example": "success"
+        },
+        "data": {
+          "type": array,
+          "items": {
+            "$ref": '#/definitions/model.transfer'
+          }
+        }
+      }
+    },
     "model.product": {
       "type": "object",
       "properties": {
@@ -647,6 +886,36 @@
         "user_id": {
           "type": "string",
           "description": "Buyer that doing the transaction",
+          "example": "867ce2ce-77ec-44da-9404-d328db73e729"
+        }
+      }
+    },
+    "model.transfer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "id for transfer in uuid format",
+          "example": "867ce2ce-77ec-44da-9404-d328db73e729"
+        },
+        "bank_number": {
+          "type": "string",
+          "description": "Bank number that used for transfer",
+          "example": "123456789"
+        },
+        "bank_name": {
+          "type": "string",
+          "description": "Bank name that used for transfer",
+          "example": "Bank World"
+        },
+        "amount": {
+          "type": "integer",
+          "description": "Amount of money for this transfer",
+          "example": 20000
+        },
+        "merchant_id": {
+          "type": "string",
+          "description": "Indicate merchant that do this transfer",
           "example": "867ce2ce-77ec-44da-9404-d328db73e729"
         }
       }

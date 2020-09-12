@@ -1,8 +1,10 @@
 package transaction
 
 import (
+	"fmt"
 	"github.com/labstack/echo"
 	message "github.com/williamchang80/sea-apd/common/constants/response"
+	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	"github.com/williamchang80/sea-apd/domain/transaction"
 	"github.com/williamchang80/sea-apd/dto/domain"
 	transaction2 "github.com/williamchang80/sea-apd/dto/request/transaction"
@@ -45,6 +47,7 @@ func (t *TransactionController) CreateTransaction(c echo.Context) error {
 func (t *TransactionController) UpdateTransactionStatus(c echo.Context) error {
 	var request transaction2.UpdateTransactionRequest
 	c.Bind(&request)
+	fmt.Println(transaction_status.ToString(request.Status))
 	err := t.usecase.UpdateTransactionStatus(request)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, &base.BaseResponse{
