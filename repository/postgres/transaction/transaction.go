@@ -14,7 +14,7 @@ func NewTransactionRepository(db *gorm.DB) transaction.TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
-func (t TransactionRepository) CreateTransaction(tr transaction.Transaction) error {
+func (t TransactionRepository) CreateCart(tr transaction.Transaction) error {
 	err := t.db.Create(&tr).Error
 	return err
 }
@@ -66,4 +66,34 @@ func (t TransactionRepository) UpdateTransaction(tr transaction.Transaction) err
 		return err
 	}
 	return nil
+}
+
+func (t TransactionRepository) AddCartItem(cart transaction.ProductTransaction) error {
+	if err := t.db.Create(&cart).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t TransactionRepository) RemoveCartItem(cart transaction.ProductTransaction) error {
+	if err := t.db.Where("transactionId = ? AND productId = ?", cart.TransactionId, cart.ProductId).Delete(&transaction.ProductTransaction{}).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t TransactionRepository) UpdateCartItem(cart transaction.ProductTransaction) error {
+	if err := t.db.Model(&cart).Where("transactionId = ? AND productId = ?", cart.TransactionId, cart.ProductId).Update(&cart).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t TransactionRepository) GetCartItems(id string) ([]transaction.ProductTransaction, error) {
+	var cartItems []transaction.ProductTransaction
+	err := t.db.Where("transaction_id = ?", id).Find(&cartItems).Error
+	if err != nil {
+		return nil, err
+	}
+	return cartItems, nil
 }

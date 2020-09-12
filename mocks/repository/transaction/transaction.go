@@ -27,11 +27,19 @@ var (
 		CustomerId: "1",
 		MerchantId: "1",
 	}
-	mockTransactionSlice = []transaction.Transaction{}
+	mockTransactionSlice   = []transaction.Transaction{}
+	mockProductTransaction = transaction.ProductTransaction{}
 )
 
 type MockRepository struct {
 	ctrl *gomock.Controller
+}
+
+func (m MockRepository) CreateCart(transaction transaction.Transaction) error {
+	if reflect.DeepEqual(transaction, emptyTransaction) {
+		return errors.New("Transaction cannot be empty")
+	}
+	return nil
 }
 
 func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
@@ -39,13 +47,6 @@ func NewMockRepository(ctrl *gomock.Controller) *MockRepository {
 		ctrl: ctrl,
 	}
 	return mock
-}
-
-func (m MockRepository) CreateTransaction(transaction transaction.Transaction) error {
-	if reflect.DeepEqual(transaction, emptyTransaction) {
-		return errors.New("Transaction cannot be empty")
-	}
-	return nil
 }
 
 func (m MockRepository) GetTransactionById(id string) (*transaction.Transaction, error) {
@@ -81,4 +82,32 @@ func (m MockRepository) UpdateTransaction(transaction transaction.Transaction) e
 		return errors.New("Cannot update transaction")
 	}
 	return nil
+}
+
+func (m MockRepository) AddCartItem(cart transaction.ProductTransaction) error {
+	if cart == mockProductTransaction {
+		return errors.New("cannot add item to cart")
+	}
+	return nil
+}
+
+func (m MockRepository) RemoveCartItem(cart transaction.ProductTransaction) error {
+	if cart == mockProductTransaction {
+		return errors.New("cannot remove item from cart")
+	}
+	return nil
+}
+
+func (m MockRepository) UpdateCartItem(cart transaction.ProductTransaction) error {
+	if cart == mockProductTransaction {
+		return errors.New("cannot update item from cart")
+	}
+	return nil
+}
+
+func (m MockRepository) GetCartItems(id string) ([]transaction.ProductTransaction, error) {
+	if len(id) == 0 {
+		return nil, errors.New("cannot get cart items")
+	}
+	return []transaction.ProductTransaction{}, nil
 }

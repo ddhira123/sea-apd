@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"errors"
 	"github.com/williamchang80/sea-apd/common/constants/transaction_status"
 	"github.com/williamchang80/sea-apd/common/observer"
 	"github.com/williamchang80/sea-apd/domain/merchant"
@@ -32,21 +33,12 @@ ProductUsecase) transaction.TransactionUsecase {
 		productUseCase:  productUsecase}
 }
 
-func convertTransactionRequestToDomain(t transaction2.TransactionRequest) transaction.Transaction {
+func convertTransactionRequestToDomain(t transaction2.CreateCartRequest) transaction.Transaction {
 	return transaction.Transaction{
-		Status:     transaction_status.ToString(transaction_status.WAITING_CONFIRMATION),
-		BankNumber: t.BankNumber,
-		BankName:   t.BankName,
-		Amount:     t.Amount,
-		CustomerId: t.CustomerId,
+		Status:     transaction_status.ToString(transaction_status.ON_CARTS),
+		CustomerId: t.UserId,
 		MerchantId: t.MerchantId,
 	}
-}
-
-func (t TransactionUsecase) CreateTransaction(request transaction2.TransactionRequest) error {
-	tran := convertTransactionRequestToDomain(request)
-	err := t.tr.CreateTransaction(tran)
-	return err
 }
 
 func (i *TransactionObserver) attachObservers() {
@@ -119,4 +111,76 @@ func (t TransactionUsecase) PayTransaction(request transaction2.PaymentRequest) 
 		return err
 	}
 	return nil
+}
+
+func ConvertCartRequest(req transaction2.CartRequest) transaction.ProductTransaction {
+	return transaction.ProductTransaction{
+		ProductId:     req.ProductId,
+		TransactionId: req.TransactionId,
+		Quantity:      req.Quantity,
+	}
+}
+
+func CheckOnCart(t TransactionUsecase, transactionId string) error {
+	trs, err := t.tr.GetTransactionById(transactionId)
+	if err != nil {
+		return err
+	}
+	if transaction_status.ParseToEnum(trs.Status) != transaction_status.ON_CARTS {
+		return errors.New("Transaction's status is not on cart.")
+	}
+	return nil
+}
+
+func (t TransactionUsecase) AddCartItem(request transaction2.CartRequest) error {
+	errr := CheckOnCart(t, request.TransactionId)
+	if errr != nil {
+		return errr
+	}
+	ci := ConvertCartRequest(request)
+	err := t.tr.AddCartItem(ci)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t TransactionUsecase) RemoveCartItem(request transaction2.CartRequest) error {
+	errr := CheckOnCart(t, request.TransactionId)
+	if errr != nil {
+		return errr
+	}
+	ci := ConvertCartRequest(request)
+	err := t.tr.RemoveCartItem(ci)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t TransactionUsecase) UpdateCartItem(request transaction2.CartRequest) error {
+	errr := CheckOnCart(t, request.TransactionId)
+	if errr != nil {
+		return errr
+	}
+	ci := ConvertCartRequest(request)
+	err := t.tr.UpdateCartItem(ci)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (t TransactionUsecase) GetCartItems(id string) ([]transaction.ProductTransaction, error) {
+	ci, err := t.tr.GetCartItems(id)
+	if err != nil {
+		return nil, err
+	}
+	return ci, nil
+}
+
+func (t TransactionUsecase) CreateCart(request transaction2.CreateCartRequest) error {
+	tran := convertTransactionRequestToDomain(request)
+	err := t.tr.CreateCart(tran)
+	return err
 }
