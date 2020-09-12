@@ -64,3 +64,10 @@ func (m MockRepository) GetProductsByMerchant(merchantId string) ([]domain.Produ
 	}
 	return nil, errors.New("Cannot Delete Product")
 }
+
+func (m MockRepository) GetProductPriceSumByTransactionId(transactionId string) int {
+	if len(transactionId) == 0 {
+		return 0
+	}
+	return 10
+}
