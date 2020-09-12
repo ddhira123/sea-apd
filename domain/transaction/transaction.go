@@ -28,28 +28,40 @@ type ProductTransaction struct {
 }
 
 type TransactionUsecase interface {
-	CreateTransaction(transaction.TransactionRequest) error
 	GetTransactionById(id string) (*Transaction, error)
 	UpdateTransactionStatus(transaction.UpdateTransactionRequest) error
 	GetTransactionHistory(userId string) ([]Transaction, error)
 	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
 	PayTransaction(request transaction.PaymentRequest) error
+	AddCartItem(request transaction.CartRequest) error
+	RemoveCartItem(request transaction.CartRequest) error
+	UpdateCartItem(request transaction.CartRequest) error
+	GetCartItems(id string) ([]ProductTransaction, error)
+	CreateCart(request transaction.CreateCartRequest) error
 }
 
 type TransactionController interface {
-	CreateTransaction(echo.Context) error
 	GetTransactionById(echo.Context) error
 	UpdateTransactionStatus(echo.Context) error
 	GetTransactionHistory(echo.Context) error
 	GetMerchantRequestItem(echo.Context) error
 	PayTransaction(echo.Context) error
+	AddCartItem(echo.Context) error
+	RemoveCartItem(echo.Context) error
+	UpdateCartItem(echo.Context) error
+	GetCartItems(echo.Context) error
+	CreateCart(echo.Context) error
 }
 
 type TransactionRepository interface {
-	CreateTransaction(Transaction) error
 	GetTransactionById(string) (*Transaction, error)
 	UpdateTransactionStatus(status string, id string) (*Transaction, error)
 	GetTransactionByRequiredStatus(requiredStatus []string, userId string) ([]Transaction, error)
 	GetMerchantRequestItem(merchantId string) ([]Transaction, error)
 	UpdateTransaction(transaction Transaction) error
+	AddCartItem(cart ProductTransaction) error
+	RemoveCartItem(cart ProductTransaction) error
+	UpdateCartItem(cart ProductTransaction) error
+	GetCartItems(id string) ([]ProductTransaction, error)
+	CreateCart(transaction Transaction) error
 }

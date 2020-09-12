@@ -18,8 +18,19 @@ type UpdateTransactionRequest struct {
 }
 
 type PaymentRequest struct {
-	CustomerId string `json:"customer_id"`
-	BankNumber string `json:"bank_number"`
-	BankName   string `json:"bank_name"`
+	CustomerId    string `json:"customer_id"`
+	BankNumber    string `json:"bank_number"`
+	BankName      string `json:"bank_name"`
 	TransactionId string `json:"transaction_id"`
+}
+
+type CartRequest struct {
+	ProductId     string `json:"product_id"`
+	TransactionId string `json:"transaction_id"`
+	Quantity      int    `json:"quantity"`
+}
+
+type CreateCartRequest struct {
+	UserId     string `json:"user_id"`
+	MerchantId string `json:"merchant_id"`
 }
